@@ -1,0 +1,8 @@
+{
+  "name": "centcom-tracker",
+  "version": "1.0.0",
+  "description": "US CENTCOM Operations Tracker",
+  "dependencies": {
+    "ws": "^8.17.0"
+  }
+}
