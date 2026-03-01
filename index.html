@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>US CENTCOM — Middle East Operations</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --amber: #ffb600;
+  --amber-dim: #cc8800;
+  --amber-glow: rgba(255,182,0,0.15);
+  --bg: #0a0800;
+  --panel: #0e0c00;
+  --panel2: #131000;
+  --border: #2a2200;
+  --border-lit: #3a2f00;
+  --text: #e8c87a;
+  --text-dim: #7a6230;
+  --text-muted: #4a3d20;
+  --green: #39ff7a;
+  --red: #ff3b3b;
+  --blue: #4ab8ff;
+  --purple: #cc88ff;
+  --sand: #c4a35a;
+  --plane-color: #00eeff;
+  --ship-color: #ff8c00;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--text); font-family:'Share Tech Mono',monospace; }
+body::after {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,182,0,0.01) 3px,rgba(255,182,0,0.01) 4px);
+}
+
+/* ── HEADER ── */
+header {
+  height:54px; background:var(--panel); border-bottom:1px solid var(--border-lit);
+  display:flex; align-items:center; justify-content:space-between; padding:0 16px;
+  flex-shrink:0; z-index:300; position:relative;
+}
+.h-left { display:flex; align-items:center; gap:12px; }
+.logo { font-family:'Orbitron',monospace; font-weight:900; font-size:.95rem; letter-spacing:5px; color:var(--amber); text-shadow:0 0 20px var(--amber); }
+.logo-sub { font-size:.52rem; letter-spacing:3px; color:var(--text-dim); margin-top:1px; }
+.divv { width:1px; height:28px; background:var(--border-lit); flex-shrink:0; }
+.pill { display:flex; align-items:center; gap:6px; font-size:.58rem; letter-spacing:2px; color:var(--green); border:1px solid rgba(57,255,122,.3); padding:3px 9px; white-space:nowrap; }
+.pdot { width:5px; height:5px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green); animation:blink 1.4s infinite; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.2} }
+
+/* Track toggle pills */
+.track-toggles { display:flex; gap:5px; }
+.track-btn {
+  display:flex; align-items:center; gap:5px;
+  border:1px solid var(--border-lit); color:var(--text-dim);
+  font-family:'Share Tech Mono',monospace; font-size:.58rem; letter-spacing:1.5px;
+  padding:4px 10px; cursor:pointer; transition:all .15s; background:transparent; white-space:nowrap;
+}
+.track-btn.on { background:rgba(0,0,0,.3); }
+.track-btn[data-track="planes"].on  { border-color:var(--plane-color); color:var(--plane-color); background:rgba(0,238,255,.07); }
+.track-btn[data-track="ships"].on   { border-color:var(--ship-color); color:var(--ship-color); background:rgba(255,140,0,.07); }
+.track-btn[data-track="bases"].on   { border-color:var(--amber); color:var(--amber); background:var(--amber-glow); }
+.track-btn .tb-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+
+/* View switcher */
+.view-switcher-wrap { position:relative; }
+.view-btn {
+  display:flex; align-items:center; gap:7px;
+  background:var(--panel2); border:1px solid var(--border-lit); color:var(--text-dim);
+  font-family:'Share Tech Mono',monospace; font-size:.6rem; letter-spacing:2px;
+  padding:5px 12px; cursor:pointer; transition:all .15s; white-space:nowrap;
+}
+.view-btn:hover, .view-btn.open { border-color:var(--amber); color:var(--amber); background:var(--amber-glow); }
+.view-btn .vb-caret { font-size:.5rem; transition:transform .2s; }
+.view-btn.open .vb-caret { transform:rotate(180deg); }
+.view-dropdown {
+  position:absolute; top:calc(100% + 6px); right:0;
+  background:rgba(10,8,0,.98); border:1px solid var(--amber);
+  box-shadow:0 0 30px rgba(255,182,0,.12),0 8px 32px rgba(0,0,0,.8);
+  width:300px; z-index:500;
+  opacity:0; transform:translateY(-6px) scaleY(.95); transform-origin:top right;
+  transition:all .18s; pointer-events:none;
+}
+.view-dropdown.open { opacity:1; transform:translateY(0) scaleY(1); pointer-events:all; }
+.vd-title { padding:9px 13px; font-family:'Orbitron',monospace; font-size:.54rem; letter-spacing:3px; color:var(--text-dim); border-bottom:1px solid var(--border-lit); }
+.vd-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; padding:8px; }
+.vd-item {
+  border:1px solid var(--border-lit); padding:8px 6px 6px; cursor:pointer; transition:all .15s;
+  position:relative; text-align:center;
+}
+.vd-item:hover { border-color:var(--amber); background:rgba(255,182,0,.04); }
+.vd-item.active { border-color:var(--amber); background:rgba(255,182,0,.08); }
+.vd-item.active::after { content:'✓'; position:absolute; top:4px; right:6px; color:var(--amber); font-size:.58rem; }
+.vd-swatch { width:100%; height:36px; margin-bottom:5px; }
+.prev-night    { background:radial-gradient(ellipse at 30% 60%,#0a2a10,#020f05); }
+.prev-satellite{ background:linear-gradient(160deg,#1a3020,#0d200d 30%,#152515 60%,#081508); }
+.prev-hybrid   { background:linear-gradient(160deg,#1a3020,#0d200d 40%,#102010); }
+.prev-terrain  { background:linear-gradient(170deg,#1e2a08,#2a3410 20%,#1a2810 50%,#0e1a08); }
+.prev-topo     { background:linear-gradient(160deg,#0a1a0a,#122212 50%,#0c180c); }
+.prev-desert   { background:linear-gradient(160deg,#2a1e08,#1e1608 30%,#1a1206); }
+.vd-name { font-family:'Orbitron',monospace; font-size:.55rem; color:var(--text); letter-spacing:1px; }
+
+.h-right { display:flex; align-items:center; gap:16px; }
+.stat { text-align:right; }
+.stat-num { font-family:'Orbitron',monospace; font-size:.95rem; font-weight:700; color:var(--amber); line-height:1; }
+.stat-lbl { font-size:.52rem; color:var(--text-dim); letter-spacing:2px; }
+.clock { font-family:'Orbitron',monospace; font-size:.75rem; color:var(--amber); letter-spacing:3px; text-shadow:0 0 10px var(--amber); }
+
+/* ── LAYOUT ── */
+.main { display:flex; height:calc(100vh - 54px - 28px); }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width:290px; flex-shrink:0; background:var(--panel); border-right:1px solid var(--border-lit);
+  display:flex; flex-direction:column; overflow:hidden; z-index:100;
+}
+.sb-title {
+  padding:9px 13px; font-family:'Orbitron',monospace; font-size:.56rem; letter-spacing:3px; color:var(--text-dim);
+  border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;
+}
+.sb-title span { color:var(--amber); }
+.filters { padding:8px 9px; border-bottom:1px solid var(--border); display:flex; flex-wrap:wrap; gap:4px; }
+.fbtn {
+  background:transparent; border:1px solid var(--border-lit); color:var(--text-dim);
+  font-family:'Share Tech Mono',monospace; font-size:.56rem; letter-spacing:1.5px;
+  padding:3px 7px; cursor:pointer; transition:all .15s;
+}
+.fbtn.active,.fbtn:hover { border-color:var(--amber); color:var(--amber); background:var(--amber-glow); }
+.sfbtn {
+  background:transparent; border:1px solid var(--border-lit); color:var(--text-dim);
+  font-family:'Share Tech Mono',monospace; font-size:.56rem; letter-spacing:1.5px;
+  padding:3px 7px; cursor:pointer; transition:all .15s;
+}
+.sfbtn.active,.sfbtn:hover { border-color:var(--ship-color); color:var(--ship-color); background:rgba(255,140,0,.08); }
+
+/* Tabs */
+.sb-tabs { display:flex; border-bottom:1px solid var(--border); }
+.sb-tab {
+  flex:1; padding:7px; text-align:center; font-family:'Orbitron',monospace; font-size:.55rem;
+  letter-spacing:2px; color:var(--text-muted); cursor:pointer; border-bottom:2px solid transparent;
+  transition:all .15s;
+}
+.sb-tab:hover { color:var(--text-dim); }
+.sb-tab.active { color:var(--amber); border-bottom-color:var(--amber); }
+.sb-tab[data-tab="planes"].active { color:var(--plane-color); border-bottom-color:var(--plane-color); }
+.sb-tab[data-tab="ships"].active  { color:var(--ship-color);  border-bottom-color:var(--ship-color); }
+
+.tab-panel { display:none; flex:1; overflow-y:auto; padding:5px; }
+.tab-panel.active { display:block; }
+.tab-panel::-webkit-scrollbar { width:3px; }
+.tab-panel::-webkit-scrollbar-thumb { background:var(--border-lit); }
+
+/* Base cards */
+.bcard {
+  border:1px solid transparent; padding:8px 10px; cursor:pointer; margin-bottom:3px;
+  transition:all .12s; position:relative;
+}
+.bcard::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:transparent; transition:background .12s; }
+.bcard:hover { border-color:var(--border-lit); background:rgba(255,182,0,.03); }
+.bcard:hover::before { background:var(--amber-dim); }
+.bcard.active { border-color:var(--amber); background:rgba(255,182,0,.07); }
+.bcard.active::before { background:var(--amber); }
+.bcard-name { font-family:'Orbitron',monospace; font-size:.62rem; font-weight:600; color:var(--amber); margin-bottom:3px; line-height:1.3; }
+.bcard-meta { display:flex; align-items:center; gap:6px; font-size:.56rem; color:var(--text-dim); }
+.bcard-country { color:var(--sand); }
+.badge { font-size:.52rem; padding:1px 5px; border:1px solid; letter-spacing:1px; }
+
+/* Plane / ship list items */
+.flight-item, .ship-item {
+  border:1px solid transparent; padding:8px 10px; cursor:pointer; margin-bottom:3px;
+  transition:all .12s;
+}
+.flight-item:hover { border-color:rgba(0,238,255,.3); background:rgba(0,238,255,.04); }
+.ship-item:hover   { border-color:rgba(255,140,0,.3);  background:rgba(255,140,0,.04); }
+.flight-item.active { border-color:var(--plane-color); background:rgba(0,238,255,.07); }
+.ship-item.active   { border-color:var(--ship-color);  background:rgba(255,140,0,.07); }
+
+.fi-row1 { display:flex; justify-content:space-between; align-items:center; margin-bottom:3px; }
+.fi-callsign { font-family:'Orbitron',monospace; font-size:.65rem; font-weight:600; color:var(--plane-color); }
+.si-name     { font-family:'Orbitron',monospace; font-size:.6rem; font-weight:600; color:var(--ship-color); }
+.fi-alt  { font-size:.56rem; color:var(--text-dim); }
+.fi-row2 { display:flex; gap:10px; font-size:.55rem; color:var(--text-muted); }
+.fi-country { color:var(--text-dim); }
+
+.live-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:.52rem; color:var(--green); letter-spacing:1px;
+  border:1px solid rgba(57,255,122,.25); padding:1px 6px;
+}
+.live-dot { width:4px; height:4px; border-radius:50%; background:var(--green); animation:blink 1s infinite; }
+
+.refresh-bar {
+  padding:6px 10px; border-top:1px solid var(--border); display:flex;
+  align-items:center; justify-content:space-between; font-size:.55rem; color:var(--text-muted);
+}
+.refresh-btn {
+  background:transparent; border:1px solid var(--border-lit); color:var(--text-dim);
+  font-family:'Share Tech Mono',monospace; font-size:.55rem; padding:2px 8px; cursor:pointer; transition:all .15s;
+}
+.refresh-btn:hover { border-color:var(--amber); color:var(--amber); }
+
+/* ── MAP ── */
+.map-wrap { flex:1; position:relative; overflow:hidden; }
+#map { width:100%; height:100%; }
+
+.corner { position:absolute; width:20px; height:20px; border-color:var(--amber-dim); border-style:solid; opacity:.5; z-index:10; pointer-events:none; }
+.ctlr { top:10px; left:10px; border-width:1px 0 0 1px; }
+.ctrr { top:10px; right:10px; border-width:1px 1px 0 0; }
+.cblr { bottom:10px; left:10px; border-width:0 0 1px 1px; }
+.cbrr { bottom:10px; right:10px; border-width:0 1px 1px 0; }
+
+/* ── INFO PANEL ── */
+.info-panel {
+  position:absolute; bottom:18px; right:18px; width:275px;
+  background:rgba(10,8,0,.97); border:1px solid var(--amber);
+  box-shadow:0 0 30px rgba(255,182,0,.15);
+  opacity:0; transform:translateY(8px); transition:all .22s; pointer-events:none; z-index:50;
+}
+.info-panel.show { opacity:1; transform:translateY(0); pointer-events:all; }
+.info-panel.plane-panel { border-color:var(--plane-color); box-shadow:0 0 30px rgba(0,238,255,.12); }
+.info-panel.ship-panel  { border-color:var(--ship-color);  box-shadow:0 0 30px rgba(255,140,0,.12); }
+.ip-hdr {
+  background:rgba(255,182,0,.07); border-bottom:1px solid var(--border-lit);
+  padding:7px 13px; font-family:'Orbitron',monospace; font-size:.54rem; letter-spacing:3px; color:var(--text-dim);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.plane-panel .ip-hdr { background:rgba(0,238,255,.06); }
+.ship-panel  .ip-hdr { background:rgba(255,140,0,.06); }
+.ip-close { cursor:pointer; font-size:.8rem; } .ip-close:hover { color:var(--amber); }
+.ip-body { padding:13px; }
+.ip-name { font-family:'Orbitron',monospace; font-size:.88rem; font-weight:700; color:var(--amber); text-shadow:0 0 14px rgba(255,182,0,.45); margin-bottom:11px; line-height:1.3; }
+.plane-panel .ip-name { color:var(--plane-color); text-shadow:0 0 14px rgba(0,238,255,.4); }
+.ship-panel  .ip-name { color:var(--ship-color);  text-shadow:0 0 14px rgba(255,140,0,.4); }
+.ip-row { display:flex; justify-content:space-between; font-size:.6rem; margin-bottom:6px; gap:8px; }
+.ip-row .lbl { color:var(--text-muted); letter-spacing:1px; flex-shrink:0; }
+.ip-row .val { color:var(--text); text-align:right; }
+.ip-div { height:1px; background:var(--border); margin:8px 0; }
+.ip-notes { font-size:.59rem; color:var(--text-dim); line-height:1.6; }
+.ip-status { display:flex; align-items:center; gap:6px; font-size:.56rem; color:var(--green); letter-spacing:2px; margin-top:9px; }
+.ip-sdot { width:5px; height:5px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green); animation:blink 1.4s infinite; }
+
+/* ── LEGEND ── */
+.legend {
+  position:absolute; top:14px; right:14px; background:rgba(10,8,0,.93);
+  border:1px solid var(--border-lit); padding:10px 13px; z-index:50;
+}
+.leg-title { font-family:'Orbitron',monospace; font-size:.52rem; letter-spacing:3px; color:var(--text-dim); margin-bottom:8px; }
+.leg-item { display:flex; align-items:center; gap:7px; font-size:.58rem; color:var(--text-dim); margin-bottom:5px; }
+.leg-dot { width:9px; height:9px; border-radius:50%; border:2px solid; flex-shrink:0; }
+.leg-div { height:1px; background:var(--border); margin:6px 0; }
+
+/* ── LIVE COUNTS HUD ── */
+.hud {
+  position:absolute; top:14px; left:14px; z-index:50;
+  display:flex; flex-direction:column; gap:5px;
+}
+.hud-item {
+  background:rgba(10,8,0,.88); border:1px solid var(--border-lit);
+  padding:6px 12px; display:flex; align-items:center; gap:8px;
+  font-size:.58rem; min-width:130px;
+}
+.hud-num { font-family:'Orbitron',monospace; font-size:.9rem; font-weight:700; line-height:1; }
+.hud-lbl { color:var(--text-dim); font-size:.52rem; letter-spacing:1px; }
+
+/* ── FOOTER ── */
+footer {
+  height:28px; background:var(--panel); border-top:1px solid var(--border-lit);
+  display:flex; align-items:center; padding:0 16px; gap:20px; flex-shrink:0;
+  font-size:.54rem; color:var(--text-muted); letter-spacing:1.5px; z-index:200;
+}
+footer span { color:var(--text-dim); }
+
+/* Spinner */
+.spin { display:inline-block; animation:spin .8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+.empty-msg { padding:20px; text-align:center; color:var(--text-muted); font-size:.62rem; line-height:1.8; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-left">
+    <div>
+      <div class="logo">CENTCOM</div>
+      <div class="logo-sub">// MIDDLE EAST OPS TRACKER</div>
+    </div>
+    <div class="divv"></div>
+    <div class="pill"><div class="pdot"></div>LIVE</div>
+    <div class="divv"></div>
+
+    <!-- Track toggles -->
+    <div class="track-toggles">
+      <button class="track-btn on" data-track="bases">
+        <div class="tb-dot" style="background:var(--amber)"></div>BASES
+      </button>
+      <button class="track-btn on" data-track="planes">
+        <div class="tb-dot" style="background:var(--plane-color)"></div>✈ AIRCRAFT
+      </button>
+      <button class="track-btn on" data-track="ships">
+        <div class="tb-dot" style="background:var(--ship-color)"></div>⚓ SHIPS
+      </button>
+    </div>
+
+    <div class="divv"></div>
+
+    <!-- View switcher -->
+    <div class="view-switcher-wrap">
+      <button class="view-btn" id="viewBtn">
+        🗺 <span id="viewLabel">NIGHT OPS</span> <span class="vb-caret">▼</span>
+      </button>
+      <div class="view-dropdown" id="viewDropdown">
+        <div class="vd-title">// MAP VIEW</div>
+        <div class="vd-grid">
+          <div class="vd-item active" data-view="night">
+            <div class="vd-swatch prev-night"></div>
+            <div class="vd-name">NIGHT OPS</div>
+          </div>
+          <div class="vd-item" data-view="satellite">
+            <div class="vd-swatch prev-satellite"></div>
+            <div class="vd-name">SATELLITE</div>
+          </div>
+          <div class="vd-item" data-view="hybrid">
+            <div class="vd-swatch prev-hybrid"></div>
+            <div class="vd-name">HYBRID</div>
+          </div>
+          <div class="vd-item" data-view="terrain">
+            <div class="vd-swatch prev-terrain"></div>
+            <div class="vd-name">TERRAIN</div>
+          </div>
+          <div class="vd-item" data-view="topo">
+            <div class="vd-swatch prev-topo"></div>
+            <div class="vd-name">TOPO</div>
+          </div>
+          <div class="vd-item" data-view="desert">
+            <div class="vd-swatch prev-desert"></div>
+            <div class="vd-name">DESERT</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="h-right">
+    <div class="stat"><div class="stat-num" id="planeCount">--</div><div class="stat-lbl">AIRCRAFT</div></div>
+    <div class="stat"><div class="stat-num" id="shipCount">--</div><div class="stat-lbl">VESSELS</div></div>
+    <div class="divv"></div>
+    <div><div class="clock" id="utcClock">--:--:-- UTC</div><div class="stat-lbl" style="text-align:right">ZULU</div></div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-tabs">
+      <div class="sb-tab active" data-tab="bases">BASES</div>
+      <div class="sb-tab" data-tab="planes">AIRCRAFT</div>
+      <div class="sb-tab" data-tab="ships">SHIPS</div>
+    </div>
+
+    <!-- BASES TAB -->
+    <div class="tab-panel active" id="tab-bases">
+      <div style="padding:6px 8px 4px; border-bottom:1px solid var(--border); display:flex; flex-wrap:wrap; gap:4px; margin-bottom:4px;">
+        <button class="fbtn active" data-filter="all">ALL</button>
+        <button class="fbtn" data-filter="Air Base">AIR</button>
+        <button class="fbtn" data-filter="Naval">NAVAL</button>
+        <button class="fbtn" data-filter="Army">ARMY</button>
+        <button class="fbtn" data-filter="Joint">JOINT</button>
+        <button class="fbtn" data-filter="Forward">FWD</button>
+      </div>
+      <div id="baseList"></div>
+    </div>
+
+    <!-- PLANES TAB -->
+    <div class="tab-panel" id="tab-planes">
+      <div style="padding:5px 8px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:.52rem; color:var(--text-dim); letter-spacing:2px;">LIVE AIRCRAFT</span>
+        <span class="live-badge"><span class="live-dot"></span>OPENSKY</span>
+      </div>
+      <div id="planeFilters" style="padding:5px 7px; border-bottom:1px solid var(--border); display:flex; flex-wrap:wrap; gap:4px;">
+        <button class="fbtn active" data-pfilter="all">ALL</button>
+        <button class="fbtn" data-pfilter="mil" style="color:#aaff00;border-color:#2a4400">⚔ MIL</button>
+        <button class="fbtn" data-pfilter="civ">✈ CIV</button>
+        <button class="fbtn" data-pfilter="usa">USA</button>
+        <button class="fbtn" data-pfilter="high">HIGH&gt;30K</button>
+        <button class="fbtn" data-pfilter="low">LOW&lt;10K</button>
+      </div>
+      <div id="planeList"><div class="empty-msg">Loading aircraft data...<br><span class="spin">◌</span></div></div>
+      <div class="refresh-bar">
+        <span>Next refresh: <span id="planeCountdown">60</span>s</span>
+        <button class="refresh-btn" id="refreshPlanes">↻ REFRESH</button>
+      </div>
+    </div>
+
+    <!-- SHIPS TAB -->
+    <div class="tab-panel" id="tab-ships">
+      <div style="padding:5px 8px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:.52rem; color:var(--text-dim); letter-spacing:2px;">VESSEL TRACKING</span>
+        <span class="live-badge" style="color:var(--ship-color);border-color:rgba(255,140,0,.3)"><span class="live-dot" style="background:var(--ship-color)"></span>AIS</span>
+      </div>
+      <div id="shipFilters" style="padding:5px 7px; border-bottom:1px solid var(--border); display:flex; flex-wrap:wrap; gap:4px;">
+        <button class="sfbtn active" data-sfilter="all">ALL</button>
+        <button class="sfbtn" data-sfilter="military" style="color:#ff8c00;border-color:#3a1e00">⚓ NAVY</button>
+        <button class="sfbtn" data-sfilter="tanker" style="color:#ff4444;border-color:#3a0000">⛽ TANKER</button>
+        <button class="sfbtn" data-sfilter="container" style="color:#44ff88;border-color:#003a15">📦 CARGO</button>
+        <button class="sfbtn" data-sfilter="bulk" style="color:#44ddff;border-color:#003038">BULK</button>
+        <button class="sfbtn" data-sfilter="lng">LNG</button>
+      </div>
+      <div id="shipList"><div class="empty-msg">Loading vessel data...<br><span class="spin">◌</span></div></div>
+      <div style="border-top:1px solid var(--border);padding:4px 8px;">
+        <div style="font-family:Orbitron,monospace;font-size:.5rem;letter-spacing:2px;color:var(--text-muted);margin-bottom:3px;display:flex;justify-content:space-between">
+          <span>// CONNECTION LOG</span>
+          <span id="aisDebugToggle" style="cursor:pointer;color:var(--amber)" onclick="document.getElementById('aisDebugWrap').style.display=document.getElementById('aisDebugWrap').style.display==='none'?'block':'none'">▼</span>
+        </div>
+        <div id="aisDebugWrap" style="display:block">
+          <div id="aisDebug" style="max-height:120px;overflow-y:auto;font-family:Share Tech Mono,monospace;"></div>
+        </div>
+      </div>
+      <div class="refresh-bar">
+        <span id="shipRefreshLabel">WebSocket: <span id="shipCountdown" style="color:var(--green)">LIVE</span></span>
+        <button class="refresh-btn" id="refreshShips">↻ RECONNECT</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div class="map-wrap">
+    <div class="corner ctlr"></div><div class="corner ctrr"></div>
+    <div class="corner cblr"></div><div class="corner cbrr"></div>
+    <div id="map"></div>
+
+    <!-- HUD live counts -->
+    <div class="hud">
+      <div class="hud-item" id="hudPlanes" style="border-color:rgba(0,238,255,.3)">
+        <div>
+          <div class="hud-num" style="color:var(--plane-color)" id="hudPlaneNum">--</div>
+          <div class="hud-lbl">AIRCRAFT IN AOR</div>
+        </div>
+        <div style="font-size:1.2rem;opacity:.5">✈</div>
+      </div>
+      <div class="hud-item" id="hudShips" style="border-color:rgba(255,140,0,.3)">
+        <div>
+          <div class="hud-num" style="color:var(--ship-color)" id="hudShipNum">--</div>
+          <div class="hud-lbl">VESSELS IN AOR</div>
+        </div>
+        <div style="font-size:1.2rem;opacity:.5">⚓</div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="leg-title">// LEGEND</div>
+      <div class="leg-item"><div class="leg-dot" style="border-color:#ffb600;background:rgba(255,182,0,.3)"></div>Air Base</div>
+      <div class="leg-item"><div class="leg-dot" style="border-color:#4ab8ff;background:rgba(74,184,255,.3)"></div>Naval</div>
+      <div class="leg-item"><div class="leg-dot" style="border-color:#39ff7a;background:rgba(57,255,122,.3)"></div>Army</div>
+      <div class="leg-item"><div class="leg-dot" style="border-color:#ff3b3b;background:rgba(255,59,59,.3)"></div>Joint</div>
+      <div class="leg-item"><div class="leg-dot" style="border-color:#cc88ff;background:rgba(204,136,255,.3)"></div>Forward</div>
+      <div class="leg-div"></div>
+      <div class="leg-item"><div class="leg-dot" style="border-color:#aaff00;background:rgba(170,255,0,.25)"></div>Military AC</div>
+      <div class="leg-item"><div class="leg-dot" style="border-color:var(--plane-color);background:rgba(0,238,255,.25)"></div>Civilian AC</div>
+      <div class="leg-div"></div>
+      <div class="leg-item"><div class="leg-dot" style="border-color:#ff8c00;background:rgba(255,140,0,.3)"></div>US Navy</div>
+      <div class="leg-item"><div class="leg-dot" style="border-color:#ff6060;background:rgba(255,96,96,.3)"></div>Allied Navy</div>
+      <div class="leg-item"><div class="leg-dot" style="border-color:#ff4444;background:rgba(255,68,68,.3)"></div>Tanker</div>
+      <div class="leg-item"><div class="leg-dot" style="border-color:#44ff88;background:rgba(68,255,136,.3)"></div>Container</div>
+      <div class="leg-item"><div class="leg-dot" style="border-color:#44ddff;background:rgba(68,221,255,.3)"></div>Cargo/Bulk</div>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="info-panel" id="infoPanel">
+      <div class="ip-hdr"><span id="ipHeader">// INSTALLATION INTEL</span><span class="ip-close" id="closePanel">✕</span></div>
+      <div class="ip-body">
+        <div class="ip-name" id="ipName"></div>
+        <div id="ipRows"></div>
+        <div class="ip-div"></div>
+        <div class="ip-notes" id="ipNotes"></div>
+        <div class="ip-status"><div class="ip-sdot"></div><span id="ipStatusText">OPERATIONAL — ACTIVE</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>AOR: <span>USCENTCOM</span></div>
+  <div>AIRCRAFT: <span>OPENSKY NETWORK</span></div>
+  <div>SHIPS: <span>AISSTREAM / MYSHIPTRACKING</span></div>
+  <div style="margin-left:auto" id="lastUpdate">LAST UPDATE: --</div>
+</footer>
+
+<script>
+// ── BASES DATA ──
+const BASES = [
+  { name:"Al Udeid Air Base", country:"Qatar", type:"Air Base", branch:"USAF / CENTCOM HQ", lat:25.1173, lng:51.3150, personnel:"~10,000+", notes:"Largest US air base in the Middle East. Hosts AFCENT and CENTCOM forward HQ." },
+  { name:"Ali Al Salem Air Base", country:"Kuwait", type:"Air Base", branch:"USAF", lat:29.3467, lng:47.5200, personnel:"~1,500", notes:"Key staging base for airlift and fighter missions." },
+  { name:"Camp Arifjan", country:"Kuwait", type:"Army", branch:"US Army / ARCENT", lat:29.2000, lng:47.9500, personnel:"~15,000", notes:"Major Army logistics hub. One of the largest US installations in the Middle East." },
+  { name:"NSA Bahrain (5th Fleet HQ)", country:"Bahrain", type:"Naval", branch:"US Navy / 5th Fleet", lat:26.2285, lng:50.5955, personnel:"~7,000", notes:"HQ of US Naval Forces Central Command and 5th Fleet." },
+  { name:"Prince Sultan Air Base", country:"Saudi Arabia", type:"Air Base", branch:"USAF", lat:24.0624, lng:47.5793, personnel:"~2,500+", notes:"Reactivated 2019. Hosts F-35s, Patriot batteries, and THAAD systems." },
+  { name:"Eskan Village Air Base", country:"Saudi Arabia", type:"Air Base", branch:"USAF / CENTCOM", lat:24.4800, lng:46.7300, personnel:"~500", notes:"Hosts USAF and CENTCOM support personnel." },
+  { name:"Al Dhafra Air Base", country:"UAE", type:"Air Base", branch:"USAF", lat:24.2480, lng:54.5470, personnel:"~3,500", notes:"Supports ISR, tanker, and strike missions. Hosts F-35A and U-2 aircraft." },
+  { name:"Camp Lemonnier", country:"Djibouti", type:"Joint", branch:"CJTF-HOA", lat:11.5469, lng:43.1590, personnel:"~4,000", notes:"Only permanent US base in Africa. Supports counterterrorism operations." },
+  { name:"Isa Air Base", country:"Bahrain", type:"Air Base", branch:"USAF / Bahrain AF", lat:26.0285, lng:50.6300, personnel:"~1,000", notes:"Joint US-Bahraini facility. Supports regional air patrol and training." },
+  { name:"Al Asad Air Base", country:"Iraq", type:"Joint", branch:"OIR Coalition", lat:33.7856, lng:42.4413, personnel:"~1,000", notes:"One of Iraq's largest air bases. Targeted by Iranian ballistic missiles in Jan 2020." },
+  { name:"Erbil Air Base", country:"Iraq", type:"Forward", branch:"USAF / OIR", lat:36.2375, lng:43.9631, personnel:"~2,000", notes:"Key northern Iraq base for Operation Inherent Resolve." },
+  { name:"Jordan Training Sites", country:"Jordan", type:"Joint", branch:"CENTCOM / SOF", lat:31.9800, lng:35.9300, personnel:"~3,000+", notes:"Multiple facilities supporting special operations and partner training." },
+  { name:"Muwaffaq Salti Air Base", country:"Jordan", type:"Air Base", branch:"USAF", lat:31.8267, lng:36.7872, personnel:"~1,000", notes:"Hosts rotational USAF units. Staging point for regional missions." },
+  { name:"Al-Tanf Garrison", country:"Syria", type:"Forward", branch:"US Army / SOF", lat:33.5053, lng:38.6450, personnel:"~200", notes:"Near Syria-Iraq-Jordan tri-border. Trains partner forces within deconfliction zone." },
+  { name:"Incirlik Air Base", country:"Turkey", type:"Air Base", branch:"USAF / NATO", lat:37.0021, lng:35.4257, personnel:"~1,500", notes:"Major NATO base hosting US B61 nuclear weapons under NATO sharing." },
+  { name:"Thumrait Air Base", country:"Oman", type:"Air Base", branch:"USAF (Access)", lat:17.6660, lng:54.0240, personnel:"Access rights", notes:"US contingency access rights for southern operations." },
+  { name:"Masirah Island Air Base", country:"Oman", type:"Air Base", branch:"USAF (Access)", lat:20.6750, lng:58.8980, personnel:"Rotating det.", notes:"Island base with Indian Ocean access. Hosts maritime patrol aircraft." },
+  { name:"Harir Air Base", country:"Iraq", type:"Forward", branch:"USAF / OIR", lat:36.5523, lng:44.3614, personnel:"~300", notes:"Forward operating base near Erbil. Supports advisory and ISR missions." },
+  { name:"Camp Simba / Manda Bay", country:"Kenya", type:"Forward", branch:"US Army / AFRICOM", lat:-2.2645, lng:40.8713, personnel:"~150", notes:"Forward location for East Africa counterterrorism ops." },
+];
+
+const TYPE_COLOR = {
+  'Air Base': { hex:'#ffb600' },
+  'Naval':    { hex:'#4ab8ff' },
+  'Army':     { hex:'#39ff7a' },
+  'Joint':    { hex:'#ff3b3b' },
+  'Forward':  { hex:'#cc88ff' },
+};
+
+// AOR bounds for OpenSky (Middle East region)
+const AOR = { lamin: -5, lomin: 30, lamax: 42, lomax: 65 };
+
+// ── MAP STYLES ──
+const STYLES = {
+  night: {
+    label: 'NIGHT OPS', type: 'roadmap',
+    styles: [
+      { elementType:'geometry', stylers:[{color:'#0d1f12'}] },
+      { elementType:'labels.text.stroke', stylers:[{color:'#051008'}] },
+      { elementType:'labels.text.fill', stylers:[{color:'#4a7050'}] },
+      { featureType:'administrative.country', elementType:'geometry.stroke', stylers:[{color:'#2a5030'},{weight:1.2}] },
+      { featureType:'administrative.country', elementType:'labels.text.fill', stylers:[{color:'#5a9060'}] },
+      { featureType:'landscape', elementType:'geometry', stylers:[{color:'#0a1a0d'}] },
+      { featureType:'poi', elementType:'labels', stylers:[{visibility:'off'}] },
+      { featureType:'road', elementType:'geometry', stylers:[{color:'#0f2a15'}] },
+      { featureType:'road', elementType:'labels.text.fill', stylers:[{color:'#2a4a30'}] },
+      { featureType:'transit', elementType:'geometry', stylers:[{color:'#071a0a'}] },
+      { featureType:'water', elementType:'geometry', stylers:[{color:'#020f06'}] },
+      { featureType:'water', elementType:'labels.text.fill', stylers:[{color:'#1a4025'}] },
+    ]
+  },
+  satellite: { label: 'SATELLITE', type: 'hybrid', styles: [] },
+  hybrid:    { label: 'HYBRID',    type: 'hybrid', styles: [
+    { featureType:'all', elementType:'labels.text.fill', stylers:[{color:'#00ff88'}] },
+    { featureType:'all', elementType:'labels.text.stroke', stylers:[{color:'#000000'},{weight:2}] },
+  ]},
+  terrain: { label: 'TERRAIN', type: 'terrain', styles: [
+    { elementType:'geometry', stylers:[{color:'#0e2210'}] },
+    { featureType:'water', elementType:'geometry', stylers:[{color:'#021008'}] },
+    { featureType:'poi', elementType:'labels', stylers:[{visibility:'off'}] },
+    { featureType:'road', elementType:'labels.text.fill', stylers:[{color:'#3a6040'}] },
+  ]},
+  topo: { label: 'TOPO', type: 'terrain', styles: [
+    { elementType:'geometry', stylers:[{color:'#081a0a'},{saturation:-30}] },
+    { elementType:'labels.text.fill', stylers:[{color:'#39ff7a'}] },
+    { elementType:'labels.text.stroke', stylers:[{color:'#000'},{weight:2}] },
+    { featureType:'water', elementType:'geometry', stylers:[{color:'#021508'}] },
+    { featureType:'road', elementType:'geometry', stylers:[{color:'#0d2a12'}] },
+    { featureType:'administrative.country', elementType:'geometry.stroke', stylers:[{color:'#39ff7a'},{weight:.8}] },
+  ]},
+  desert: { label: 'DESERT', type: 'roadmap', styles: [
+    { elementType:'geometry', stylers:[{color:'#1a1408'}] },
+    { elementType:'labels.text.fill', stylers:[{color:'#c4a35a'}] },
+    { elementType:'labels.text.stroke', stylers:[{color:'#0a0800'},{weight:2}] },
+    { featureType:'administrative.country', elementType:'geometry.stroke', stylers:[{color:'#5a4010'},{weight:1}] },
+    { featureType:'administrative.country', elementType:'labels.text.fill', stylers:[{color:'#ffb600'}] },
+    { featureType:'landscape', elementType:'geometry', stylers:[{color:'#150f04'}] },
+    { featureType:'poi', elementType:'labels', stylers:[{visibility:'off'}] },
+    { featureType:'road', elementType:'geometry', stylers:[{color:'#2a1e08'}] },
+    { featureType:'water', elementType:'geometry', stylers:[{color:'#060b10'}] },
+    { featureType:'water', elementType:'labels.text.fill', stylers:[{color:'#3a5060'}] },
+  ]},
+};
+
+// ── STATE ──
+let map, baseMarkers = [], planeMarkers = {}, shipMarkers = {};
+let selectedType = null, selectedIdx = null;
+let activeBaseFilter = 'all';
+let layerVisible = { bases: true, planes: true, ships: true };
+let planeData = [], shipData = [];
+let planeTimer, shipTimer;
+let currentView = 'night';
+
+// ── CLOCK ──
+function tick() {
+  const n = new Date(), z = v => String(v).padStart(2,'0');
+  document.getElementById('utcClock').textContent =
+    `${z(n.getUTCHours())}:${z(n.getUTCMinutes())}:${z(n.getUTCSeconds())} UTC`;
+}
+setInterval(tick, 1000); tick();
+
+// ── TABS ──
+document.querySelectorAll('.sb-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.sb-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ── TRACK TOGGLES ──
+document.querySelectorAll('.track-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.classList.toggle('on');
+    const track = btn.dataset.track;
+    layerVisible[track] = btn.classList.contains('on');
+    if (track === 'bases') baseMarkers.forEach(({ marker }) => marker.setVisible(layerVisible.bases && (activeBaseFilter === 'all' || BASES[baseMarkers.indexOf(baseMarkers.find(m => m.marker === marker))].type === activeBaseFilter)));
+    if (track === 'planes') Object.values(planeMarkers).forEach(m => m.setVisible(layerVisible.planes));
+    if (track === 'ships')  Object.values(shipMarkers).forEach(m => m.setVisible(layerVisible.ships));
+  });
+});
+
+// ── VIEW SWITCHER ──
+const viewBtn = document.getElementById('viewBtn');
+const viewDropdown = document.getElementById('viewDropdown');
+viewBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  viewBtn.classList.toggle('open');
+  viewDropdown.classList.toggle('open');
+});
+document.addEventListener('click', () => {
+  viewBtn.classList.remove('open');
+  viewDropdown.classList.remove('open');
+});
+document.querySelectorAll('.vd-item').forEach(item => {
+  item.addEventListener('click', e => {
+    e.stopPropagation();
+    const v = item.dataset.view;
+    setView(v);
+    document.querySelectorAll('.vd-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    viewBtn.classList.remove('open');
+    viewDropdown.classList.remove('open');
+  });
+});
+function setView(v) {
+  currentView = v;
+  const s = STYLES[v];
+  document.getElementById('viewLabel').textContent = s.label;
+  if (map) { map.setMapTypeId(s.type); map.setOptions({ styles: s.styles }); }
+}
+
+// ── GOOGLE MAPS INIT ──
+window.initMap = function() {
+  const s = STYLES[currentView];
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: { lat: 27, lng: 46 },
+    zoom: 5,
+    styles: s.styles,
+    mapTypeId: s.type,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: false,
+    zoomControlOptions: { position: google.maps.ControlPosition.RIGHT_CENTER },
+    backgroundColor: '#0a1a0d',
+  });
+
+  buildBaseMarkers();
+  buildBaseList();
+  fetchPlanes();
+  fetchShips();
+
+  // Planes auto-refresh every 60s (REST API)
+  planeTimer = setInterval(() => { fetchPlanes(); resetCountdown('plane'); }, 60000);
+
+  // Ships use persistent WebSocket — no interval needed
+  // Countdown still shown for planes
+  startCountdown('plane');
+  startCountdown('ship');
+
+  map.addListener('click', deselectAll);
+};
+
+// ── BASE MARKERS ──
+function buildBaseMarkers() {
+  BASES.forEach((base, i) => {
+    const c = TYPE_COLOR[base.type] || { hex:'#ff3b3b' };
+    const icon = {
+      path: google.maps.SymbolPath.CIRCLE,
+      fillColor: c.hex, fillOpacity: 0.4,
+      strokeColor: c.hex, strokeWeight: 2, scale: 9,
+    };
+    const marker = new google.maps.Marker({
+      position: { lat: base.lat, lng: base.lng },
+      map, icon, title: base.name, optimized: false,
+      visible: layerVisible.bases,
+    });
+    new google.maps.Circle({
+      map, center: { lat: base.lat, lng: base.lng }, radius: 55000,
+      strokeColor: c.hex, strokeOpacity: 0.1, strokeWeight: 1,
+      fillColor: c.hex, fillOpacity: 0.025,
+    });
+    marker.addListener('click', () => showBasePanel(i));
+    marker.addListener('mouseover', () => { if (selectedIdx !== i || selectedType !== 'base') marker.setIcon({...icon, scale:12, fillOpacity:.65}); });
+    marker.addListener('mouseout',  () => { if (selectedIdx !== i || selectedType !== 'base') marker.setIcon({...icon, scale:9, fillOpacity:.4}); });
+    baseMarkers.push({ marker, icon });
+  });
+}
+
+// ── MILITARY AIRCRAFT DETECTION ──
+// Known military ICAO24 prefixes by country (hex ranges)
+const MILITARY_PREFIXES = [
+  'ae', // USA military (AE0000–AFFFFF)
+  '43bf', // UK military
+  '3a4000', // France military
+  '6800', // Germany military
+];
+// Military callsign patterns
+const MIL_CALLSIGN_RE = /^(RCH|REACH|EVAC|JAKE|GRIM|VIPER|TOPGUN|GHOST|KNIFE|COBRA|EAGLE|HAWK|FURY|RAGE|DOOM|COPE|USAF|USN|USMC|NATO|ARMY|SPAR|SAM\d|AIR FORCE ONE|C\d{2}|B\d{1,2}|KC\d|E\d[ABC])/i;
+
+function isMilitary(icao24, callsign) {
+  if (!icao24) return false;
+  const ic = icao24.toLowerCase();
+  // US mil: ae0000–afffff
+  if (ic.startsWith('ae') || ic.startsWith('af')) return true;
+  // Check callsign patterns
+  if (callsign && MIL_CALLSIGN_RE.test((callsign || '').trim())) return true;
+  return false;
+}
+
+// ── COUNTDOWN TIMERS ──
+let countdownVals = { plane: 60, ship: 60 };
+let countdownTick;
+
+function startCountdown(type) {
+  countdownVals[type] = 60;
+  if (!countdownTick) {
+    countdownTick = setInterval(() => {
+      ['plane', 'ship'].forEach(t => {
+        countdownVals[t] = Math.max(0, countdownVals[t] - 1);
+        const el = document.getElementById(t + 'Countdown');
+        if (el) el.textContent = countdownVals[t];
+      });
+    }, 1000);
+  }
+}
+
+function resetCountdown(type) {
+  countdownVals[type] = 60;
+}
+
+
+async function fetchPlanes() {
+  try {
+    document.getElementById('planeList').innerHTML = '<div class="empty-msg"><span class="spin">◌</span> Fetching aircraft...</div>';
+    const url = `https://opensky-network.org/api/states/all?lamin=${AOR.lamin}&lomin=${AOR.lomin}&lamax=${AOR.lamax}&lomax=${AOR.lomax}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    planeData = (data.states || []).filter(s => s[5] != null && s[6] != null);
+    renderPlanes();
+    updateTimestamp();
+  } catch(e) {
+    // Fallback to simulated data if CORS blocks
+    planeData = generateSimPlanes();
+    renderPlanes();
+    updateTimestamp();
+  }
+}
+
+function generateSimPlanes() {
+  const aircraft = [
+    // Military
+    { cs:'REACH101 ', icao:'ae1234', orig:'USA' }, { cs:'RCH202  ', icao:'ae2345', orig:'USA' },
+    { cs:'JAKE11  ', icao:'ae3456', orig:'USA' }, { cs:'EVAC01  ', icao:'ae4567', orig:'USA' },
+    { cs:'VIPER21 ', icao:'ae5678', orig:'USA' }, { cs:'GHOST31 ', icao:'ae6789', orig:'USA' },
+    { cs:'SPAR19  ', icao:'ae7890', orig:'USA' }, { cs:'COBRA41 ', icao:'ae8901', orig:'USA' },
+    { cs:'NATO01  ', icao:'43bf01', orig:'GBR' }, { cs:'EAGLE51 ', icao:'ae9012', orig:'USA' },
+    // Civilian
+    { cs:'UAE123  ', icao:'896601', orig:'UAE' }, { cs:'QTR456  ', icao:'06a024', orig:'QAT' },
+    { cs:'THY789  ', icao:'4ba800', orig:'TUR' }, { cs:'EK504   ', icao:'896604', orig:'UAE' },
+    { cs:'GF321   ', icao:'896680', orig:'BHR' }, { cs:'KAC310  ', icao:'47b400', orig:'KWT' },
+    { cs:'SV800   ', icao:'710102', orig:'SAU' }, { cs:'BAW902  ', icao:'400c60', orig:'GBR' },
+    { cs:'AFR211  ', icao:'39d650', orig:'FRA' }, { cs:'DLH781  ', icao:'3c6523', orig:'DEU' },
+    { cs:'MSR412  ', icao:'010103', orig:'EGY' }, { cs:'OMA331  ', icao:'70c070', orig:'OMN' },
+    { cs:'FDB141  ', icao:'896605', orig:'UAE' }, { cs:'MEA103  ', icao:'2d8000', orig:'LBN' },
+    { cs:'PIA661  ', icao:'760403', orig:'PAK' }, { cs:'ISS902  ', icao:'894403', orig:'IND' },
+    { cs:'RJA201  ', icao:'740007', orig:'JOR' }, { cs:'IAW551  ', icao:'729c01', orig:'IRQ' },
+  ];
+  return aircraft.map(({ cs, icao, orig }) => {
+    const lat = AOR.lamin + Math.random() * (AOR.lamax - AOR.lamin);
+    const lng = AOR.lomin + Math.random() * (AOR.lomax - AOR.lomin);
+    const hdg = Math.random() * 360;
+    const alt = (8000 + Math.random() * 32000) * 0.3048;
+    const spd = (220 + Math.random() * 380) * 0.514444;
+    return [icao, cs, orig, null, null, lng, lat, alt, false, spd, hdg, null, null, null, null, false, Math.floor(1000 + Math.random()*6999)];
+  });
+}
+
+function renderPlanes() {
+  // Clear old markers
+  Object.values(planeMarkers).forEach(m => m.setMap(null));
+  planeMarkers = {};
+
+  let milCount = 0;
+
+  planeData.forEach((state, i) => {
+    const [icao24, callsign, origin, , , lng, lat, baro_alt, on_ground, velocity, heading] = state;
+    if (on_ground || !lat || !lng) return;
+
+    const mil = isMilitary(icao24, callsign);
+    if (mil) milCount++;
+
+    // Military = bright yellow-green, civilian = cyan
+    const planeCol = mil ? '#aaff00' : '#00eeff';
+    const scale    = mil ? 1.4 : 1.1;
+
+    // Proper airplane icon: fuselage + wings + tail
+    const planePath = mil
+      ? 'M 0,-10 C 1,-8 1,-5 1,-3 L 7,2 L 7,4 L 1,2 L 1,6 L 3,8 L 3,9 L 0,8 L -3,9 L -3,8 L -1,6 L -1,2 L -7,4 L -7,2 L -1,-3 C -1,-5 -1,-8 0,-10 Z'
+      : 'M 0,-9 C 1,-7 1,-4 1,-2 L 6,2 L 6,4 L 1,2 L 1,6 L 3,7 L 3,8 L 0,7 L -3,8 L -3,7 L -1,6 L -1,2 L -6,4 L -6,2 L -1,-2 C -1,-4 -1,-7 0,-9 Z';
+    const icon = {
+      path: planePath,
+      fillColor: planeCol,
+      fillOpacity: mil ? 1.0 : 0.9,
+      strokeColor: mil ? '#ffffff' : '#003344',
+      strokeWeight: mil ? 0.6 : 0.4,
+      scale: mil ? 1.5 : 1.2,
+      rotation: heading || 0,
+      anchor: new google.maps.Point(0, 0),
+    };
+
+    const marker = new google.maps.Marker({
+      position: { lat, lng },
+      map, icon,
+      title: (callsign || '').trim(),
+      optimized: true,
+      visible: layerVisible.planes,
+      zIndex: mil ? 10 : 1,
+    });
+
+    marker.addListener('click', () => showPlanePanel(state, i, mil));
+    planeMarkers[i] = marker;
+  });
+
+  const count = Object.keys(planeMarkers).length;
+  document.getElementById('planeCount').textContent = count;
+  document.getElementById('hudPlaneNum').textContent = count;
+
+  // Update HUD to show mil breakdown
+  const hudLbl = document.querySelector('#hudPlanes .hud-lbl');
+  if (hudLbl) hudLbl.textContent = `${milCount} MIL · ${count - milCount} CIV`;
+
+  buildPlaneList();
+}
+
+function buildPlaneList() {
+  const list = document.getElementById('planeList');
+  list.innerHTML = '';
+  if (planeData.length === 0) {
+    list.innerHTML = '<div class="empty-msg">No aircraft data available</div>'; return;
+  }
+  const visible = planeData.filter(s => !s[7] && s[5] && s[6]);
+
+  // Sort: military first
+  visible.sort((a, b) => {
+    const aMil = isMilitary(a[0], a[1]) ? 0 : 1;
+    const bMil = isMilitary(b[0], b[1]) ? 0 : 1;
+    return aMil - bMil;
+  });
+
+  visible.slice(0, 80).forEach((state) => {
+    const [icao24, callsign, origin, , , lng, lat, baro_alt, , velocity, heading] = state;
+    const cs = (callsign || '').trim() || icao24 || '------';
+    const alt = baro_alt ? Math.round(baro_alt * 3.28084 / 100) * 100 : '--';
+    const spd = velocity ? Math.round(velocity * 1.94384) : '--';
+    const mil = isMilitary(icao24, callsign);
+    const col = mil ? '#aaff00' : '#00eeff';
+
+    const div = document.createElement('div');
+    div.className = 'flight-item';
+    div.innerHTML = `
+      <div class="fi-row1">
+        <span class="fi-callsign" style="color:${col}">${cs}</span>
+        <span style="font-size:.5rem;padding:1px 5px;border:1px solid ${col};color:${col};letter-spacing:1px">${mil ? 'MIL' : 'CIV'}</span>
+      </div>
+      <div class="fi-row2">
+        <span class="fi-alt">${alt} ft</span>
+        <span>${spd} kts</span>
+        <span class="fi-country">${origin || '??'}</span>
+        <span>HDG ${heading ? Math.round(heading) : '--'}°</span>
+      </div>`;
+    div.addEventListener('click', () => {
+      showPlanePanel(state, planeData.indexOf(state), mil);
+      if (lat && lng) map.panTo({ lat, lng });
+    });
+    list.appendChild(div);
+  });
+  if (visible.length > 80) {
+    const more = document.createElement('div');
+    more.className = 'empty-msg';
+    more.textContent = `+ ${visible.length - 80} more aircraft`;
+    list.appendChild(more);
+  }
+}
+
+// ── AISSTREAM.IO REAL-TIME SHIP TRACKING ──
+const AIS_KEY = '210e80f698fcb84784ff542be8728a33dcd36c06';
+let aisSocket = null;
+let aisConnected = false;
+const shipLookup = {}; // mmsi -> index in shipData
+
+// AIS ship type codes -> human readable
+const AIS_TYPE = {
+  0:'Unknown', 20:'WIG', 21:'WIG Hazard A', 22:'WIG Hazard B', 23:'WIG Hazard C', 24:'WIG Hazard D',
+  30:'Fishing', 31:'Towing', 32:'Towing Large', 33:'Dredging', 34:'Diving Ops', 35:'Military',
+  36:'Sailing', 37:'Pleasure Craft', 40:'HSC', 41:'HSC Hazard A', 42:'HSC Hazard B',
+  50:'Pilot Vessel', 51:'SAR', 52:'Tug', 53:'Port Tender', 54:'Anti-Pollution',
+  55:'Law Enforcement', 58:'Medical Transport', 59:'Resolution 18',
+  60:'Passenger', 61:'Passenger Hazard A', 62:'Passenger Hazard B', 69:'Passenger',
+  70:'Cargo', 71:'Cargo Hazard A', 72:'Cargo Hazard B', 79:'Cargo',
+  80:'Tanker', 81:'Tanker Hazard A', 82:'Tanker Hazard B', 89:'Tanker',
+  90:'Other', 91:'Other Hazard A', 99:'Other',
+};
+
+function aisTypeToCategory(typeCode) {
+  if (typeCode === 35) return 'Military';
+  if (typeCode >= 80 && typeCode <= 89) return 'Tanker';
+  if (typeCode >= 70 && typeCode <= 79) return 'Cargo';
+  if (typeCode >= 60 && typeCode <= 69) return 'Passenger Ferry';
+  if (typeCode === 30) return 'Fishing';
+  if (typeCode === 52) return 'Tug';
+  if (typeCode === 36 || typeCode === 37) return 'Small Craft';
+  if (typeCode >= 40 && typeCode <= 49) return 'High Speed Craft';
+  return AIS_TYPE[typeCode] || 'Unknown';
+}
+
+function mmsiToFlag(mmsi) {
+  const m = String(mmsi).padStart(9, '0');
+  const mid = parseInt(m.substring(0, 3));
+  const midMap = {
+    338:'USA', 303:'USA', 366:'USA', 367:'USA', 368:'USA', 369:'USA',
+    232:'GBR', 233:'GBR', 234:'GBR', 235:'GBR',
+    228:'FRA', 227:'FRA',
+    244:'NLD', 245:'NLD', 246:'NLD',
+    211:'DEU', 218:'DEU',
+    247:'ITA', 248:'MLT',
+    224:'ESP', 225:'ESP',
+    257:'NOR', 258:'NOR', 259:'NOR',
+    219:'DNK', 220:'DNK',
+    265:'SWE', 266:'SWE',
+    422:'IRN', 423:'IRN',
+    447:'KWT', 466:'QAT', 470:'UAE', 408:'BHR',
+    403:'SAU', 461:'OMN', 431:'JPN', 440:'KOR',
+    477:'HKG', 416:'TWN', 563:'SGP', 477:'CHN',
+    338:'USA', 503:'AUS', 316:'CAN',
+    636:'LBR', 538:'MHL', 370:'PAN', 352:'PAN',
+    372:'PAN', 353:'PAN', 374:'PAN',
+    477:'CHN', 413:'CHN', 412:'CHN',
+    419:'IND', 419:'IND',
+    310:'BMU', 309:'BHS',
+    205:'BEL', 209:'CYP', 241:'GRC', 240:'GRC',
+    622:'EGY', 621:'DJI', 634:'KEN',
+    710:'BRA', 710:'BRA',
+  };
+  return midMap[mid] || '---';
+}
+
+
+// ── AISSTREAM via NETLIFY PROXY (REST poll every 60s) ──
+// Direct WebSocket to AISStream is blocked from browsers.
+// Netlify serverless function connects server-side and returns a vessel snapshot.
+
+
+function handleAISMessage(msg) {
+  const type = msg.MessageType;
+  const meta = msg.MetaData || {};
+  const mmsi = String(meta.MMSI || meta.MMSI_String || '');
+  if (!mmsi) return;
+
+  // AISStream puts lat/lng in MetaData with lowercase keys
+  const lat = parseFloat(meta.latitude || meta.Latitude || 0);
+  const lng = parseFloat(meta.longitude || meta.Longitude || 0);
+  if (!lat || !lng || isNaN(lat) || isNaN(lng)) return;
+
+  if (type === 'PositionReport') {
+    const pos = msg.Message?.PositionReport || {};
+    // TrueHeading 511 = not available, fall back to COG
+    const hdg = (pos.TrueHeading && pos.TrueHeading !== 511)
+      ? pos.TrueHeading
+      : (pos.Cog || pos.CourseOverGround || 0);
+    const speed = pos.Sog != null ? parseFloat(pos.Sog.toFixed(1))
+                : pos.SpeedOverGround != null ? parseFloat(pos.SpeedOverGround.toFixed(1)) : 0;
+
+    if (mmsi in shipLookup) {
+      const i = shipLookup[mmsi];
+      shipData[i].lat = lat;
+      shipData[i].lng = lng;
+      shipData[i].heading = hdg;
+      shipData[i].speed = speed;
+      if (shipMarkers[i]) {
+        shipMarkers[i].setPosition({ lat, lng });
+        const ic = shipMarkers[i].getIcon();
+        if (ic) shipMarkers[i].setIcon({ ...ic, rotation: hdg });
+      }
+    } else {
+      const name = (meta.ShipName || '').trim() || mmsi;
+      const ship = {
+        name, type: 'Unknown', flag: mmsiToFlag(mmsi),
+        mmsi, lat, lng, heading: hdg, speed,
+        destination: '', imo: '', callsign: '',
+      };
+      const i = shipData.length;
+      shipData.push(ship);
+      shipLookup[mmsi] = i;
+      addShipMarker(ship, i);
+      updateShipCounts();
+    }
+  }
+
+  if (type === 'ShipStaticData') {
+    const sd = msg.Message?.ShipStaticData || {};
+    const name = (sd.Name || meta.ShipName || '').trim();
+    const typeCode = sd.Type || 0;
+    const category = aisTypeToCategory(typeCode);
+    const dest = (sd.Destination || '').trim();
+    const imo  = String(sd.ImoNumber || sd.IMONumber || '').replace(/^0+/, '');
+
+    if (mmsi in shipLookup) {
+      const i = shipLookup[mmsi];
+      if (name && name !== mmsi) shipData[i].name = name;
+      if (category !== 'Unknown') shipData[i].type = category;
+      if (dest) shipData[i].destination = dest;
+      if (imo) shipData[i].imo = imo;
+      shipData[i].callsign = (sd.CallSign || '').trim();
+      shipData[i].dim_a = sd.Dimension?.A;
+      shipData[i].dim_b = sd.Dimension?.B;
+    }
+  }
+
+  scheduleListRebuild();
+}
+
+let listRebuildTimer = null;
+function scheduleListRebuild() {
+  if (!listRebuildTimer) {
+    listRebuildTimer = setTimeout(() => {
+      listRebuildTimer = null;
+      buildShipList();
+      updateShipCounts();
+    }, 3000);
+  }
+}
+
+function updateShipCounts() {
+  const vis = shipData.filter(s => shipMatchesFilter(s, activeShipFilter)).length;
+  document.getElementById('shipCount').textContent = vis;
+  document.getElementById('hudShipNum').textContent = vis;
+  const tab = document.querySelector('.sb-tab[data-tab="ships"]');
+  if (tab) tab.textContent = 'SHIPS (' + vis + ')';
+}
+
+function addShipMarker(ship, i) {
+  if (!map) return;
+  const isNaval = ship.flag === 'USA' || ship.flag === 'GBR' || ship.flag === 'FRA';
+  const isMilShip = isNaval && (ship.type.includes('Military') || ship.type.includes('Carrier') || ship.type.includes('Destroyer') || ship.type.includes('Cruiser') || ship.type.includes('Frigate') || ship.type.includes('Amphibious'));
+  const color = ship.flag === 'USA' ? '#ff8c00'
+              : ship.flag === 'GBR' ? '#ff6060'
+              : ship.flag === 'FRA' ? '#6688ff'
+              : ship.type.includes('Tanker') || ship.type.includes('LNG') || ship.type.includes('LPG') ? '#ff4444'
+              : ship.type.includes('Container') || ship.type.includes('Cargo') ? '#44ff88'
+              : ship.type.includes('Bulk') ? '#44ddff'
+              : '#aaaaaa';
+
+  const shipPath = isMilShip
+    ? 'M 0,-9 L 4,-4 L 5,4 L 3,8 L -3,8 L -5,4 L -4,-4 Z M -2,-1 L 2,-1 L 2,3 L -2,3 Z'
+    : 'M 0,-8 L 3,-3 L 4,5 L 2,8 L -2,8 L -4,5 L -3,-3 Z';
+
+  const icon = {
+    path: shipPath,
+    fillColor: color,
+    fillOpacity: isMilShip ? 1.0 : 0.85,
+    strokeColor: isMilShip ? '#ffffff' : '#000000',
+    strokeWeight: isMilShip ? 0.6 : 0.3,
+    scale: isMilShip ? 1.6 : 1.2,
+    rotation: ship.heading || 0,
+    anchor: new google.maps.Point(0, 0),
+  };
+
+  const marker = new google.maps.Marker({
+    position: { lat: ship.lat, lng: ship.lng },
+    map,
+    icon,
+    title: ship.name,
+    optimized: true,
+    visible: layerVisible.ships && shipMatchesFilter(ship, activeShipFilter),
+    zIndex: isMilShip ? 5 : 1,
+  });
+
+  marker.addListener('click', () => showShipPanel(ship, i));
+  shipMarkers[i] = marker;
+}
+
+function updateAISStatus(state) {
+  const badge = document.querySelector('#tab-ships .live-badge');
+  if (!badge) return;
+  if (state === 'live') {
+    badge.innerHTML = '<span class="live-dot" style="background:var(--ship-color)"></span>AIS LIVE';
+    badge.style.color = 'var(--ship-color)';
+    badge.style.borderColor = 'rgba(255,140,0,.4)';
+  } else if (state === 'fetching' || state === 'connecting') {
+    badge.innerHTML = '<span class="live-dot" style="background:#ffff00;box-shadow:0 0 6px #ffff00"></span>LOADING';
+    badge.style.color = '#ffff00';
+    badge.style.borderColor = 'rgba(255,255,0,.3)';
+  } else if (state === 'offline') {
+    badge.innerHTML = '<span class="live-dot" style="background:#888;animation:none"></span>OFFLINE';
+    badge.style.color = '#888';
+  } else {
+    badge.innerHTML = '<span class="live-dot" style="background:#ff4444;animation:none"></span>ERROR';
+    badge.style.color = '#ff4444';
+  }
+}
+
+function fallbackToSimShips() {
+  console.warn('AISStream unavailable, using simulated data');
+  shipData = generateSimShips();
+  renderShips();
+  updateTimestamp();
+  const badge = document.querySelector('#tab-ships .live-badge');
+  if (badge) { badge.innerHTML = '<span class="live-dot" style="background:#888;animation:none"></span>SIMULATED'; badge.style.color='#888'; }
+}
+
+function fetchShips() {
+  connectAIS();
+}
+
+// ── SHIP / PLANE FILTER STATE ──
+let activeShipFilter = 'all';
+let activePlaneFilter = 'all';
+
+// Ship filter wiring
+document.getElementById('shipFilters').addEventListener('click', e => {
+  const btn = e.target.closest('.sfbtn'); if (!btn) return;
+  document.querySelectorAll('.sfbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeShipFilter = btn.dataset.sfilter;
+  buildShipList();
+  applyShipFilterToMarkers();
+});
+
+// Plane filter wiring
+document.getElementById('planeFilters').addEventListener('click', e => {
+  const btn = e.target.closest('[data-pfilter]'); if (!btn) return;
+  document.querySelectorAll('[data-pfilter]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activePlaneFilter = btn.dataset.pfilter;
+  buildPlaneList();
+  applyPlaneFilterToMarkers();
+});
+
+function shipMatchesFilter(ship, filter) {
+  if (filter === 'all') return true;
+  const t = ship.type.toLowerCase();
+  const f = ship.flag;
+  if (filter === 'military') return ['USA','GBR','FRA','NLD','ITA','AUS','CAN'].includes(f) && (t.includes('carrier') || t.includes('destroyer') || t.includes('cruiser') || t.includes('frigate') || t.includes('amphibious') || t.includes('dock') || t.includes('supply') || t.includes('coast'));
+  if (filter === 'tanker')   return t.includes('tanker') || t.includes('vlcc') || t.includes('ulcc');
+  if (filter === 'container')return t.includes('container') || t.includes('ro-ro') || t.includes('cargo');
+  if (filter === 'bulk')     return t.includes('bulk') || t.includes('general cargo');
+  if (filter === 'lng')      return t.includes('lng') || t.includes('lpg') || t.includes('gas');
+  return true;
+}
+
+function planeMatchesFilter(state, filter) {
+  const [icao24, callsign, origin, , , , , baro_alt] = state;
+  const mil = isMilitary(icao24, callsign);
+  if (filter === 'all')  return true;
+  if (filter === 'mil')  return mil;
+  if (filter === 'civ')  return !mil;
+  if (filter === 'usa')  return origin === 'United States';
+  if (filter === 'high') return baro_alt && (baro_alt * 3.28084) > 30000;
+  if (filter === 'low')  return baro_alt && (baro_alt * 3.28084) < 10000;
+  return true;
+}
+
+function applyShipFilterToMarkers() {
+  let visible = 0;
+  shipData.forEach((ship, i) => {
+    if (shipMarkers[i]) {
+      const vis = layerVisible.ships && shipMatchesFilter(ship, activeShipFilter);
+      shipMarkers[i].setVisible(vis);
+      if (vis) visible++;
+    }
+  });
+  document.getElementById('shipCount').textContent = visible;
+  document.getElementById('hudShipNum').textContent = visible;
+}
+
+function applyPlaneFilterToMarkers() {
+  planeData.forEach((state, i) => {
+    if (planeMarkers[i]) {
+      const vis = layerVisible.planes && planeMatchesFilter(state, activePlaneFilter);
+      planeMarkers[i].setVisible(vis);
+    }
+  });
+}
+
+function generateSimShips() {
+  const V = (name,type,flag,mmsi,lat,lng,heading,speed) => ({name,type,flag,mmsi,lat,lng,heading,speed});
+  return [
+    // ══ US NAVY ══
+    V('USS GERALD R. FORD',        'Aircraft Carrier',    'USA','338234631', 24.80, 57.50, 275, 14),
+    V('USS THEODORE ROOSEVELT',    'Aircraft Carrier',    'USA','338234900', 22.50, 60.10, 310, 15),
+    V('USS DWIGHT D. EISENHOWER',  'Aircraft Carrier',    'USA','338192032', 13.20, 45.80,  45, 12),
+    V('USS HARRY S. TRUMAN',       'Aircraft Carrier',    'USA','338234800', 18.00, 40.50, 350, 11),
+    V('USS PHILIPPINE SEA',        'Cruiser',             'USA','338234201', 25.10, 57.80, 180,  8),
+    V('USS LAKE ERIE',             'Cruiser',             'USA','338234300', 26.30, 55.40, 200, 10),
+    V('USS LABOON',                'Destroyer',           'USA','338241022', 25.40, 57.20,  90, 18),
+    V('USS MASON',                 'Destroyer',           'USA','338229031', 14.20, 42.90, 135, 20),
+    V('USS CARNEY',                'Destroyer',           'USA','338241110', 13.80, 44.10, 160, 22),
+    V('USS COLE',                  'Destroyer',           'USA','338200981', 27.10, 55.90, 270, 16),
+    V('USS GRAVELY',               'Destroyer',           'USA','338241200', 12.50, 45.80, 200, 18),
+    V('USS FORREST SHERMAN',       'Destroyer',           'USA','338241300', 15.80, 41.50,  15, 20),
+    V('USS ROSS',                  'Destroyer',           'USA','338241400', 28.20, 49.80, 120, 16),
+    V('USS BATAAN',                'Amphibious',          'USA','338230441', 14.50, 42.30, 130, 10),
+    V('USS CARTER HALL',           'Dock Landing Ship',   'USA','338231009', 14.80, 42.60, 130,  9),
+    V('USS MESA VERDE',            'Amphibious',          'USA','338231100', 13.60, 44.80, 155, 11),
+    V('USNS SUPPLY',               'Supply Ship',         'USA','338240130', 25.00, 57.60,   0,  5),
+    V('USNS PATUXENT',             'Supply Ship',         'USA','338241045', 13.50, 45.20,  90,  4),
+    V('USNS MATTHEW PERRY',        'Supply Ship',         'USA','338241500', 21.50, 60.50, 100,  6),
+    V('USS HERSHEL WILLIAMS',      'Support Vessel',      'USA','338241600', 26.80, 51.20, 240,  7),
+
+    // ══ ALLIED NAVY ══
+    V('HMS DIAMOND',               'Destroyer',           'GBR','232004210', 15.20, 42.90,  90, 20),
+    V('HMS RICHMOND',              'Frigate',             'GBR','232003881', 12.80, 44.30,  45, 18),
+    V('HMS LANCASTER',             'Frigate',             'GBR','232003900', 25.60, 57.10, 300, 16),
+    V('HMS FORT VICTORIA',         'Support Ship',        'GBR','232004100', 14.50, 43.60, 170,  8),
+    V('FS PROVENCE',               'Frigate',             'FRA','228041200', 14.00, 43.50, 200, 16),
+    V('FS LANGUEDOC',              'Frigate',             'FRA','228041300', 27.30, 54.60, 260, 14),
+    V('FS VAR',                    'Support Ship',        'FRA','228041400', 13.30, 44.00, 180,  8),
+    V('HNLMS TROMP',               'Frigate',             'NLD','244780000', 25.60, 56.80, 300, 14),
+    V('HDMS PETER WILLEMOES',      'Frigate',             'DNK','219780001', 26.10, 55.50, 270, 16),
+    V('ITS ALPINO',                'Frigate',             'ITA','247100001', 14.80, 43.10, 110, 15),
+    V('HMAS PERTH',                'Frigate',             'AUS','503100001', 12.20, 45.50, 220, 18),
+    V('HMCS MONTREAL',             'Frigate',             'CAN','316100001', 24.90, 58.20, 130, 16),
+    V('BNS GODETIA',               'Support Ship',        'BEL','205100001', 13.80, 44.60, 190,  9),
+    V('SNS ÁLVARO DE BAZÁN',       'Frigate',             'ESP','224100001', 15.50, 42.00,  20, 17),
+
+    // ══ IRANIAN NAVY ══
+    V('IRIS SAHAND',               'Frigate',             'IRN','422100001', 27.60, 55.20, 100,  8),
+    V('IRIS DENA',                 'Frigate',             'IRN','422100002', 26.90, 57.10, 200, 10),
+    V('IRIS ALBORZ',               'Destroyer',           'IRN','422100003', 28.10, 50.90, 150,  9),
+    V('IRIS DAMAVAND',             'Destroyer',           'IRN','422100004', 37.60, 49.50, 180, 12),
+    V('MAKRAN',                    'Support Ship',        'IRN','422100005', 23.80, 60.80, 100,  7),
+
+    // ══ PERSIAN GULF — LNG / GAS ══
+    V('MARAN GAS ACHILLES',        'LNG Carrier',         'GRC','241320100', 26.10, 56.30, 225, 14),
+    V('BW LION',                   'LNG Carrier',         'SGP','563094021', 25.40, 52.80,  90, 15),
+    V('QATAR GAS PIONEER',         'LNG Carrier',         'QAT','466000123', 25.00, 51.80,  50, 16),
+    V('AL SAFLIYA',                'LNG Carrier',         'QAT','466001234', 24.80, 52.30,  60, 17),
+    V('RASGAS MARAN',              'LNG Carrier',         'QAT','466002345', 24.50, 51.50,  40, 15),
+    V('AL UTOURIYA',               'LNG Carrier',         'QAT','466003456', 25.20, 51.20,  30, 16),
+    V('MESAIMEER',                 'LNG Carrier',         'QAT','466004567', 24.60, 51.90,  55, 14),
+    V('AL HAMRA',                  'LNG Carrier',         'QAT','466005678', 25.50, 50.80,  70, 15),
+    V('DUHAIL',                    'LNG Carrier',         'QAT','466006789', 24.30, 52.60,  45, 16),
+    V('AL NUAMAN',                 'LNG Carrier',         'QAT','466007890', 25.80, 50.40,  60, 14),
+    V('MOZAH',                     'LNG Carrier',         'QAT','466008901', 24.10, 52.00,  35, 17),
+    V('LIJMILIYA',                 'LNG Carrier',         'QAT','466009012', 25.60, 51.10,  80, 15),
+    V('MARIB SPIRIT',              'LNG Carrier',         'QAT','466010123', 24.90, 52.80,  50, 16),
+    V('GEMMATA',                   'LNG Carrier',         'MLT','248100001', 26.40, 53.50, 280, 14),
+    V('PACIFIC LUNA',              'LPG Carrier',         'SGP','563100001', 27.20, 52.10, 210, 12),
+    V('GAS CHALLENGER',            'LPG Carrier',         'NOR','257100001', 28.00, 50.20, 170, 11),
+
+    // ══ PERSIAN GULF — VLCC / ULCC TANKERS ══
+    V('TI EUROPE',                 'ULCC Tanker',         'BHS','309013100', 24.60, 58.40, 160,  8),
+    V('PACIFIC JEWEL',             'VLCC Tanker',         'MHL','538004321', 26.30, 55.50, 200,  9),
+    V('EURONAV LUNA',              'VLCC Tanker',         'BEL','205491000', 25.70, 56.90, 120, 11),
+    V('FRONT ALTAIR',              'VLCC Tanker',         'NOR','259020100', 25.30, 58.10,  50, 12),
+    V('PETROBRAS MARINER',         'VLCC Tanker',         'BRA','710234100', 25.50, 53.80, 310,  9),
+    V('VLCC PIONEER',              'VLCC Tanker',         'LBR','636234100', 25.90, 57.60, 150,  9),
+    V('NEPTUNE',                   'VLCC Tanker',         'GRC','241100001', 27.50, 53.20, 240, 10),
+    V('TITAN GLORY',               'VLCC Tanker',         'PAN','370100001', 26.80, 54.30, 190, 11),
+    V('ENERGY CENTURION',          'VLCC Tanker',         'MLT','248100002', 24.20, 56.10, 100, 10),
+    V('OLYMPIC LEGEND',            'VLCC Tanker',         'GRC','241100002', 25.80, 55.80, 280,  9),
+    V('MARAN POSEIDON',            'VLCC Tanker',         'GRC','241100003', 27.10, 52.40, 220, 10),
+    V('MINERVA ZOE',               'VLCC Tanker',         'GRC','241100004', 26.50, 54.80, 140, 11),
+
+    // ══ PERSIAN GULF — PRODUCT TANKERS ══
+    V('HAFNIA ODIN',               'Product Tanker',      'SGP','563190432', 27.50, 55.20, 270, 10),
+    V('STENA IMPERIAL',            'Tanker',              'SWE','265309871', 26.80, 56.40, 315, 11),
+    V('OLYMPIC LUCK',              'Tanker',              'GRC','240201432', 24.10, 57.90,  45, 13),
+    V('AL BAHIA',                  'Tanker',              'UAE','470120432', 25.10, 55.80, 180,  8),
+    V('NORDIC LUNA',               'Tanker',              'NOR','257420100', 27.20, 54.80, 280, 10),
+    V('ARDMORE SEAVANGUARD',       'Product Tanker',      'IRL','250003121', 26.20, 56.10, 310, 13),
+    V('TSAKOS LEADER',             'Tanker',              'GRC','241789100', 27.80, 50.80, 180, 10),
+    V('DELTA CAPTAIN',             'Product Tanker',      'MLT','248567100', 28.20, 49.60, 160, 11),
+    V('SCORPIO TANKER',            'Product Tanker',      'MHL','538678100', 27.60, 51.40, 200, 12),
+    V('ARDMORE SEAFOX',            'Product Tanker',      'IRL','250123100', 26.90, 52.20, 240, 10),
+    V('TORM ATLANTIC',             'Product Tanker',      'DNK','219567100', 26.00, 53.10, 280, 11),
+    V('IRAN IRAN',                 'Tanker',              'IRN','422567100', 28.50, 50.50,  90,  5),
+    V('SABITI',                    'Tanker',              'IRN','422678100', 27.90, 52.60, 210,  6),
+    V('SOTHYS',                    'Tanker',              'IRN','422789100', 26.40, 54.10, 130,  7),
+    V('GULF STAR',                 'Tanker',              'KWT','447200341', 28.90, 48.60, 135,  7),
+    V('HORMUZ PIONEER',            'Tanker',              'IRN','422012345', 26.90, 56.20,  90,  6),
+    V('BANDAR ABBAS STAR',         'Tanker',              'IRN','422456100', 27.20, 56.80, 130,  7),
+    V('GULF OF OMAN TRADER',       'Tanker',              'IRN','422234100', 24.40, 58.90, 260,  8),
+    V('IRAN SHAHED',               'Tanker',              'IRN','422345100', 25.80, 59.60, 110,  6),
+    V('ENERGY STAR',               'Tanker',              'SAU','403100001', 27.00, 50.20, 180,  9),
+    V('ARAMCO VOYAGER',            'Tanker',              'SAU','403100002', 26.50, 49.80, 200, 10),
+    V('BAHRI YANBU',               'Tanker',              'SAU','403100003', 27.80, 49.30, 160, 11),
+    V('BAHRI HOFUF',               'Tanker',              'SAU','403100004', 28.30, 48.90, 140, 10),
+    V('AMJAD',                     'Tanker',              'UAE','470100001', 26.80, 55.10,  90,  8),
+    V('MARIAM',                    'Tanker',              'UAE','470100002', 25.60, 54.60, 270,  9),
+    V('ADNOC IDENTITY',            'Tanker',              'UAE','470100003', 24.80, 54.20, 200, 10),
+    V('ADNOC EXCELLENCE',          'Tanker',              'UAE','470100004', 25.30, 53.80, 310,  9),
+    V('KUWAIT OIL TANKER',         'Tanker',              'KWT','447100001', 29.40, 48.10, 180,  8),
+    V('KAZUHIKO MARU',             'Tanker',              'JPN','431100001', 26.20, 57.40, 100, 12),
+    V('FRONT FORCE',               'Tanker',              'NOR','257200001', 25.80, 56.20, 130, 11),
+    V('TORM THUNDER',              'Product Tanker',      'DNK','219345100', 26.40, 56.70, 110, 12),
+    V('MINERVA HELEN',             'Product Tanker',      'GRC','241456100', 26.60, 56.40,  60, 11),
+    V('PHOENIX NAVIGATOR',         'Tanker',              'MLT','248345100', 26.70, 57.10,  80, 10),
+    V('BRILLIANT PIONEER',         'Tanker',              'PAN','370234100', 26.50, 57.40,  55,  9),
+    V('EAGLE BARENTS',             'Tanker',              'MHL','538345100', 26.30, 57.80,  40, 13),
+    V('OVERSEAS MYKONOS',          'Tanker',              'MHL','538456100', 26.80, 56.90, 100, 11),
+    V('MARITIME LADY',             'Tanker',              'PAN','370345100', 27.00, 56.60, 290,  8),
+
+    // ══ PERSIAN GULF — CONTAINER / CARGO ══
+    V('MAERSK CENTAUR',            'Container Ship',      'DNK','219023451', 29.80, 48.20, 180, 16),
+    V('MSC FLORIDA',               'Container Ship',      'PAN','352001234', 28.50, 49.10, 160, 14),
+    V('CMA CGM VOLTAIRE',          'Container Ship',      'FRA','228431000', 26.50, 55.00, 300, 18),
+    V('EVERGREEN EAGLE',           'Container Ship',      'TWN','416234100', 25.90, 56.50, 270, 17),
+    V('COSCO SHIPPING ARIES',      'Container Ship',      'CHN','477234100', 27.30, 53.40, 220, 15),
+    V('DUBAI FORTUNE',             'General Cargo',       'UAE','470023451', 25.20, 55.30,  90,  8),
+    V('GULF BRIDGE',               'General Cargo',       'KWT','447301234', 29.00, 48.80, 200,  7),
+    V('PACIFIC HIGHWAY',           'Ro-Ro Cargo',         'SGP','563201234', 24.30, 56.70, 130, 12),
+    V('HAPAG LLOYD DUBAI',         'Container Ship',      'DEU','218200001', 27.80, 52.60, 200, 17),
+    V('ONE INNOVATION',            'Container Ship',      'JPN','431200001', 26.90, 54.20, 280, 16),
+    V('YANG MING UNIFORM',         'Container Ship',      'TWN','416200001', 28.10, 50.10, 160, 15),
+    V('PIL MUSCAT',                'Container Ship',      'SGP','563200001', 23.50, 57.50, 130, 14),
+    V('KMTC BUSAN',                'Container Ship',      'KOR','440200001', 27.60, 53.80, 200, 15),
+    V('ARKAS IZMIR',               'Container Ship',      'TUR','271200001', 29.20, 48.60, 180, 13),
+    V('IRISL IRAN',                'Container Ship',      'IRN','422200001', 28.80, 50.40,  90,  7),
+    V('BAHRI JEDDAH',              'Ro-Ro Cargo',         'SAU','403200001', 22.50, 38.80, 330, 14),
+    V('KUWAIT TRADER',             'General Cargo',       'KWT','447123100', 29.30, 48.20, 200,  8),
+    V('ABU DHABI FALCON',          'Supply Vessel',       'UAE','470345100', 24.40, 54.30, 120,  9),
+    V('QATAR SUPPLY 1',            'Supply Vessel',       'QAT','466123100', 25.40, 51.60, 270,  7),
+    V('DUBAI FERRY 1',             'Passenger Ferry',     'UAE','470234100', 25.30, 54.80, 200, 18),
+    V('BAHRAIN GATEWAY',           'Ro-Ro Cargo',         'BHR','408234100', 26.10, 50.40,  90, 10),
+
+    // ══ PERSIAN GULF — BULK CARRIERS ══
+    V('TSAKOS BULK',               'Bulk Carrier',        'GRC','241300001', 28.50, 51.20, 170, 10),
+    V('PACIFIC BULK 1',            'Bulk Carrier',        'HKG','477300001', 27.80, 53.40, 220,  9),
+    V('BERGE EVEREST',             'Bulk Carrier',        'NOR','257300001', 26.90, 55.60, 290, 11),
+    V('STELLAR EAGLE',             'Bulk Carrier',        'HKG','477300002', 27.20, 54.90, 240, 10),
+    V('GENCO THUNDER',             'Bulk Carrier',        'MHL','538300001', 26.30, 55.80, 150, 11),
+
+    // ══ STRAIT OF HORMUZ TRANSIT ══
+    V('HORMUZ TRANSIT 1',          'Tanker',              'PAN','370400001', 26.55, 56.20,  60, 10),
+    V('HORMUZ TRANSIT 2',          'Tanker',              'GRC','241400001', 26.60, 56.45,  65, 11),
+    V('HORMUZ TRANSIT 3',          'Container Ship',      'CHN','477400001', 26.58, 56.68,  58, 14),
+    V('HORMUZ TRANSIT 4',          'Tanker',              'MHL','538400001', 26.52, 56.90, 242,  9),
+    V('HORMUZ TRANSIT 5',          'VLCC Tanker',         'LBR','636400001', 26.48, 57.10, 248, 10),
+    V('HORMUZ TRANSIT 6',          'Product Tanker',      'MLT','248400001', 26.62, 57.30, 252, 11),
+    V('HORMUZ TRANSIT 7',          'Container Ship',      'PAN','370400002', 26.45, 57.50,  55, 15),
+    V('HORMUZ TRANSIT 8',          'Bulk Carrier',        'NOR','257400001', 26.70, 57.70,  62,  9),
+    V('HORMUZ TRANSIT 9',          'LNG Carrier',         'QAT','466400001', 26.42, 57.90,  50, 16),
+    V('HORMUZ TRANSIT 10',         'Tanker',              'IRN','422400001', 26.75, 56.30, 258,  7),
+
+    // ══ RED SEA — NORTHBOUND ══
+    V('GALAXY LEADER',             'Cargo',               'BAH','408900123', 14.80, 43.20, 170,  3),
+    V('MSC PALATIUM III',          'Container Ship',      'PAN','352123456', 12.50, 44.80, 200, 14),
+    V('MAERSK HANGZHOU',           'Container Ship',      'DNK','219456100', 13.10, 44.50, 180, 15),
+    V('EVER GIVEN',                'Container Ship',      'PAN','353365000', 14.30, 42.60, 165, 12),
+    V('COSCO SHIPPING TAURUS',     'Container Ship',      'CHN','477456100', 15.80, 42.20, 340, 13),
+    V('NYK FUJI',                  'Container Ship',      'JPN','431456100', 12.00, 45.10, 190, 16),
+    V('HYUNDAI DRIVE',             'Container Ship',      'KOR','440234100', 16.20, 41.90, 355, 14),
+    V('RED SEA NAVIGATOR',         'Tanker',              'GRC','241567100', 20.50, 38.80, 330, 11),
+    V('SUEZ PIONEER',              'Tanker',              'EGY','622456100', 28.00, 33.50, 340, 10),
+    V('MARAN ORION',               'VLCC Tanker',         'GRC','241678100', 18.50, 38.20, 320,  9),
+    V('AFRICA PIONEER',            'Cargo',               'PAN','370567100', 11.80, 43.80, 180,  8),
+    V('MSC MIRJAM',                'Container Ship',      'PAN','352500001', 19.50, 38.60, 340, 16),
+    V('CMA CGM TAGE',              'Container Ship',      'FRA','228500001', 21.00, 38.30, 330, 17),
+    V('ONE STORK',                 'Container Ship',      'JPN','431500001', 17.50, 38.90, 345, 15),
+    V('HYUNDAI PLANET',            'Container Ship',      'KOR','440500001', 22.50, 38.00, 320, 14),
+    V('OOCL HONG KONG',            'Container Ship',      'HKG','477500001', 23.50, 37.50, 310, 18),
+    V('RED SEA 1',                 'Tanker',              'SAU','403500001', 25.00, 37.20, 300, 10),
+    V('RED SEA 2',                 'Tanker',              'SAU','403500002', 23.00, 37.80, 320, 11),
+    V('JEDDAH EXPRESS',            'Container Ship',      'SAU','403500003', 21.50, 39.20, 350, 13),
+    V('MOL TREASURE',              'Container Ship',      'PAN','370500001', 20.00, 38.50, 340, 15),
+    V('EVERGREEN PROSPERITY',      'Container Ship',      'TWN','416500001', 18.00, 39.00, 355, 16),
+    V('PIL AFRICA',                'Container Ship',      'SGP','563500001', 16.00, 41.00,  10, 12),
+
+    // ══ RED SEA — SOUTHBOUND ══
+    V('TORM HELLERUP',             'Tanker',              'DNK','219600001', 24.50, 37.30, 170, 11),
+    V('HAFNIA PHOENIX',            'Product Tanker',      'SGP','563600001', 22.00, 38.10, 180, 12),
+    V('ARDMORE CAPPAROE',          'Product Tanker',      'IRL','250600001', 20.00, 38.60, 190, 10),
+    V('MINERVA SYMPHONY',          'Tanker',              'GRC','241600001', 18.50, 39.10, 175, 11),
+    V('SCORPIO BULL',              'Product Tanker',      'MHL','538600001', 17.00, 39.50, 185, 12),
+    V('TEAM NARITA',               'Tanker',              'SGP','563600002', 15.00, 41.00, 195, 10),
+    V('WANDA',                     'Container Ship',      'PAN','370600001', 25.50, 37.10, 160, 15),
+    V('MSC ANZU',                  'Container Ship',      'PAN','352600001', 23.00, 37.80, 170, 16),
+    V('YM MATURITY',               'Container Ship',      'TWN','416600001', 21.50, 38.20, 180, 14),
+    V('COSCO SHIPPING CAPRICORN',  'Container Ship',      'CHN','477600001', 19.50, 38.70, 175, 15),
+    V('AL MARIFA',                 'Tanker',              'UAE','470600001', 21.00, 39.00, 180,  8),
+
+    // ══ GULF OF ADEN ══
+    V('DJIBOUTI TRADER',           'General Cargo',       'DJI','621234100', 11.60, 43.10, 270,  6),
+    V('HORN OF AFRICA',            'Bulk Carrier',        'LBR','636345100', 12.30, 44.00, 160,  7),
+    V('ADEN FALCON',               'Tanker',              'YEM','472123100', 12.80, 45.00, 270,  7),
+    V('MSC MANON',                 'Container Ship',      'PAN','352700001', 12.10, 45.60, 250, 14),
+    V('MAERSK KOWLOON',            'Container Ship',      'DNK','219700001', 11.80, 46.20, 260, 15),
+    V('CMA CGM PALAIS ROYAL',      'Container Ship',      'FRA','228700001', 11.50, 46.80, 265, 16),
+    V('EVERGREEN ELEGANCE',        'Container Ship',      'TWN','416700001', 11.30, 47.30, 255, 14),
+    V('NYK CONSTELLATION',         'Container Ship',      'JPN','431700001', 11.00, 47.90, 260, 15),
+    V('ADEN TANKER 1',             'Tanker',              'PAN','370700001', 12.50, 45.20, 270, 11),
+    V('ADEN TANKER 2',             'Tanker',              'GRC','241700001', 12.20, 46.00, 265, 10),
+    V('BERBERA STAR',              'General Cargo',       'SOM','666123100', 10.40, 45.00,  90,  5),
+
+    // ══ ARABIAN SEA ══
+    V('VEGA MERCURY',              'Tanker',              'MHL','538567100', 22.40, 60.30,  90, 12),
+    V('PACIFIC EXPLORER',          'Container Ship',      'SGP','563345100', 21.50, 59.80,  70, 15),
+    V('INDIAN OCEAN SPIRIT',       'Tanker',              'IND','419345100', 20.10, 61.20,  50, 11),
+    V('PEARL OF THE SEA',          'Bulk Carrier',        'PAN','370678100', 23.80, 59.10, 130, 10),
+    V('OMAN GLORY',                'Tanker',              'OMN','461234100', 23.00, 58.50, 200,  9),
+    V('ARABIAN MARINER',           'Bulk Carrier',        'MLT','248456100', 21.00, 60.70, 100,  9),
+    V('KARACHI EXPRESS',           'Container Ship',      'PAK','431234100', 24.70, 63.40, 200, 14),
+    V('MUMBAI STAR',               'Container Ship',      'IND','419456100', 22.10, 64.80, 140, 16),
+    V('GLOBAL FUJI',               'Bulk Carrier',        'PAN','370890100', 23.90, 57.20,  80, 11),
+    V('VALE BRASIL',               'Bulk Carrier',        'BRA','710345100', 22.80, 60.40,  60, 12),
+    V('STAR BULK',                 'Bulk Carrier',        'GRC','241890100', 22.20, 59.30,  70, 11),
+    V('GOLDEN OCEAN',              'Bulk Carrier',        'NOR','257678100', 21.60, 60.00,  80, 12),
+    V('ATLANTIC HURON',            'Bulk Carrier',        'CAN','316200001', 20.50, 61.50,  60, 10),
+    V('PACIFIC BULK',              'Bulk Carrier',        'HKG','477200001', 19.80, 62.10,  70, 11),
+    V('CARGILL STELLAR',           'Bulk Carrier',        'MHL','538200001', 21.30, 60.90,  55, 10),
+    V('MSC ARABIAN SEA',           'Container Ship',      'PAN','352800001', 20.80, 61.80, 100, 15),
+    V('EVERGREEN OCEAN',           'Container Ship',      'TWN','416800001', 19.50, 63.20,  80, 16),
+    V('MAERSK DUBAI',              'Container Ship',      'DNK','219800001', 21.80, 60.50,  90, 15),
+    V('COSCO INDIA',               'Container Ship',      'CHN','477800001', 18.80, 64.00,  85, 14),
+    V('HAPAG LLOYD MUMBAI',        'Container Ship',      'DEU','218800001', 20.20, 62.50,  95, 16),
+
+    // ══ SUEZ CANAL REGION ══
+    V('MSC OSCAR',                 'Container Ship',      'PAN','372345100', 30.50, 32.30, 330, 13),
+    V('HAPAG LLOYD BERLIN',        'Container Ship',      'DEU','218345100', 29.90, 32.60, 340, 15),
+    V('YANG MING WITNESS',         'Container Ship',      'TWN','416345100', 31.20, 32.20,  20, 14),
+    V('ONE CONTINUITY',            'Container Ship',      'JPN','431567100', 30.00, 32.50, 335, 12),
+    V('SUEZ TANKER 1',             'Tanker',              'EGY','622567100', 29.50, 32.70, 310,  9),
+    V('CMA CGM MARGUERITHE',       'Container Ship',      'FRA','228900001', 30.80, 32.40, 345, 16),
+    V('COSCO SHIPPING VIRGO',      'Container Ship',      'CHN','477900001', 31.50, 32.10,  15, 15),
+    V('EVERGREEN MARK',            'Container Ship',      'TWN','416900001', 30.20, 32.55, 330, 14),
+    V('MOL EARNEST',               'Container Ship',      'PAN','370900001', 29.70, 32.65, 320, 13),
+
+    // ══ EAST AFRICA ══
+    V('MOMBASA TRADER',            'General Cargo',       'KEN','634123100', -4.00, 40.10, 360,  6),
+    V('EAST AFRICA PIONEER',       'Bulk Carrier',        'PAN','370789100', -2.50, 41.20,  20,  8),
+    V('DJIBOUTI EXPRESS',          'Container Ship',      'DJI','621345100', 11.40, 43.40, 180, 10),
+    V('CAMP SIMBA SUPPLY',         'Supply Vessel',       'KEN','634200001', -2.30, 40.80,  90,  5),
+    V('MOMBASA EXPRESS',           'Container Ship',      'DEU','218950001', -4.10, 39.70, 360, 13),
+    V('ZANZIBAR TRADER',           'General Cargo',       'TZA','677100001', -6.20, 39.80, 350,  6),
+
+    // ══ GULF OF OMAN — COASTAL ══
+    V('MUSCAT PHOENIX',            'General Cargo',       'OMN','461345100', 23.50, 58.00, 280,  7),
+    V('SOHAR STAR',                'Tanker',              'OMN','461400001', 24.30, 57.00, 260,  8),
+    V('OMAN PIONEER',              'Tanker',              'OMN','461400002', 23.80, 57.50, 100,  9),
+    V('SALALAH TRADER',            'General Cargo',       'OMN','461400003', 16.90, 54.10, 200,  7),
+    V('NIZWA BULK',                'Bulk Carrier',        'OMN','461400004', 22.50, 59.20, 130,  8),
+
+    // ══ MEDITERRANEAN APPROACH ══
+    V('MSC MEDITERRANEAN',         'Container Ship',      'PAN','372100001', 32.50, 32.80,  20, 16),
+    V('CMA CGM BELEM',             'Container Ship',      'FRA','228100001', 33.20, 32.50,  10, 17),
+    V('MAERSK TAURUS',             'Container Ship',      'DNK','219100001', 31.80, 33.10,  30, 15),
+  ];
+}
+
+function renderShips() {
+  Object.values(shipMarkers).forEach(m => m.setMap(null));
+  shipMarkers = {};
+
+  let milCount = 0, tankerCount = 0, cargoCount = 0;
+
+  shipData.forEach((ship, i) => {
+    if (ship.type.toLowerCase().includes('carrier') || ship.type.toLowerCase().includes('destroyer') ||
+        ship.type.toLowerCase().includes('frigate') || ship.type.toLowerCase().includes('cruiser') ||
+        ship.type.toLowerCase().includes('amphibious') || ship.type.toLowerCase().includes('dock')) milCount++;
+    if (ship.type.toLowerCase().includes('tanker') || ship.type.toLowerCase().includes('lng')) tankerCount++;
+    if (ship.type.toLowerCase().includes('container') || ship.type.toLowerCase().includes('cargo') || ship.type.toLowerCase().includes('bulk')) cargoCount++;
+    // Proper ship hull icon: pointed bow, flat stern, with bridge
+    const isNaval = ship.flag === 'USA' || ship.flag === 'GBR' || ship.flag === 'FRA';
+    const isMilShip = isNaval && (ship.type.includes('Carrier') || ship.type.includes('Destroyer') || ship.type.includes('Cruiser') || ship.type.includes('Frigate') || ship.type.includes('Amphibious'));
+    const color = ship.flag === 'USA' ? '#ff8c00'
+                : ship.flag === 'GBR' ? '#ff6060'
+                : ship.flag === 'FRA' ? '#6688ff'
+                : ship.type.includes('Tanker') || ship.type.includes('LNG') ? '#ff4444'
+                : ship.type.includes('Container') ? '#44ff88'
+                : ship.type.includes('Cargo') ? '#44ddff'
+                : '#aaaaaa';
+
+    // Ship icon: bow at top, stern at bottom, wider amidships
+    const shipPath = isMilShip
+      ? 'M 0,-9 L 4,-4 L 5,4 L 3,8 L -3,8 L -5,4 L -4,-4 Z M -2,-1 L 2,-1 L 2,3 L -2,3 Z'
+      : 'M 0,-8 L 3,-3 L 4,5 L 2,8 L -2,8 L -4,5 L -3,-3 Z';
+
+    const icon = {
+      path: shipPath,
+      fillColor: color,
+      fillOpacity: isMilShip ? 1.0 : 0.85,
+      strokeColor: isMilShip ? '#ffffff' : '#000000',
+      strokeWeight: isMilShip ? 0.6 : 0.3,
+      scale: isMilShip ? 1.6 : 1.2,
+      rotation: ship.heading || 0,
+      anchor: new google.maps.Point(0, 0),
+    };
+
+    const marker = new google.maps.Marker({
+      position: { lat: ship.lat, lng: ship.lng },
+      map, icon,
+      title: ship.name,
+      optimized: true,
+      visible: layerVisible.ships,
+    });
+
+    const initiallyVisible = layerVisible.ships && shipMatchesFilter(ship, activeShipFilter);
+    marker.setVisible(initiallyVisible);
+    marker.addListener('click', () => showShipPanel(ship, i));
+    shipMarkers[i] = marker;
+  });
+
+  const count = Object.keys(shipMarkers).length;
+  const visCount = shipData.filter(s => shipMatchesFilter(s, activeShipFilter)).length;
+  document.getElementById('shipCount').textContent = visCount;
+  document.getElementById('hudShipNum').textContent = visCount;
+
+  // Update HUD breakdown
+  const hudLbl = document.querySelector('#hudShips .hud-lbl');
+  if (hudLbl) hudLbl.textContent = `${milCount} NAV · ${tankerCount} TNK · ${cargoCount} CGO`;
+
+  buildShipList();
+}
+
+function buildShipList() {
+  const list = document.getElementById('shipList');
+  list.innerHTML = '';
+  const filtered = shipData.filter(s => shipMatchesFilter(s, activeShipFilter));
+
+  // Update count badge on tab
+  const tab = document.querySelector('.sb-tab[data-tab="ships"]');
+  if (tab) tab.textContent = `SHIPS (${filtered.length})`;
+
+  filtered.forEach((ship) => {
+    const i = shipData.indexOf(ship);
+    const color = ship.flag === 'USA' ? '#ff8c00'
+                : ship.flag === 'GBR' ? '#ff6060'
+                : ship.flag === 'FRA' ? '#6688ff'
+                : ship.type.includes('Tanker') || ship.type.includes('LNG') ? '#ff4444'
+                : ship.type.includes('Container') ? '#44ff88'
+                : ship.type.includes('Cargo') || ship.type.includes('Bulk') ? '#44ddff'
+                : '#aaaaaa';
+    const div = document.createElement('div');
+    div.className = 'ship-item';
+    div.innerHTML = `
+      <div class="fi-row1">
+        <span class="si-name" style="color:${color};font-size:.62rem">${ship.name}</span>
+        <span style="font-size:.48rem;color:var(--text-muted)">${ship.flag}</span>
+      </div>
+      <div class="fi-row2">
+        <span style="font-size:.52rem;padding:1px 4px;border:1px solid ${color};color:${color}">${ship.type.toUpperCase()}</span>
+        <span>${ship.speed} kts</span>
+        <span>HDG ${ship.heading}°</span>
+      </div>`;
+    div.addEventListener('click', () => {
+      showShipPanel(ship, i);
+      map.panTo({ lat: ship.lat, lng: ship.lng });
+    });
+    list.appendChild(div);
+  });
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty-msg">No vessels match this filter</div>';
+  }
+}
+
+// ── INFO PANELS ──
+function showBasePanel(i) {
+  const base = BASES[i];
+  const c = TYPE_COLOR[base.type] || { hex:'#ff3b3b' };
+  const panel = document.getElementById('infoPanel');
+  panel.className = 'info-panel show';
+  document.getElementById('ipHeader').textContent = '// INSTALLATION INTEL';
+  document.getElementById('ipName').textContent = base.name;
+  document.getElementById('ipName').style.color = c.hex;
+  document.getElementById('ipRows').innerHTML = `
+    <div class="ip-row"><span class="lbl">COUNTRY</span><span class="val">${base.country}</span></div>
+    <div class="ip-row"><span class="lbl">TYPE</span><span class="val">${base.type}</span></div>
+    <div class="ip-row"><span class="lbl">BRANCH</span><span class="val">${base.branch}</span></div>
+    <div class="ip-row"><span class="lbl">PERSONNEL</span><span class="val">${base.personnel}</span></div>
+    <div class="ip-row"><span class="lbl">COORDS</span><span class="val">${base.lat.toFixed(4)}°, ${base.lng.toFixed(4)}°</span></div>`;
+  document.getElementById('ipNotes').textContent = base.notes;
+  document.getElementById('ipStatusText').textContent = 'OPERATIONAL — ACTIVE';
+
+  if (selectedType === 'base' && selectedIdx !== null) baseMarkers[selectedIdx]?.marker.setIcon({...baseMarkers[selectedIdx].icon, scale:9, fillOpacity:.4});
+  selectedType = 'base'; selectedIdx = i;
+  const { marker, icon } = baseMarkers[i];
+  marker.setIcon({...icon, scale:14, fillOpacity:.75, strokeWeight:3});
+
+  document.querySelectorAll('.bcard').forEach(c => c.classList.remove('active'));
+  document.querySelector(`.bcard[data-i="${i}"]`)?.classList.add('active');
+}
+
+function showPlanePanel(state, i, mil) {
+  const [icao24, callsign, origin, , , lng, lat, baro_alt, , velocity, heading, , , , , , squawk] = state;
+  const cs = (callsign || '').trim() || icao24;
+  const alt = baro_alt ? Math.round(baro_alt * 3.28084) : '--';
+  const spd = velocity ? Math.round(velocity * 1.94384) : '--';
+  const col = mil ? '#aaff00' : '#00eeff';
+  const panel = document.getElementById('infoPanel');
+  panel.className = 'info-panel plane-panel show';
+  document.getElementById('ipHeader').textContent = mil ? '// MILITARY AIRCRAFT' : '// CIVILIAN AIRCRAFT';
+  document.getElementById('ipName').textContent = cs;
+  document.getElementById('ipName').style.color = col;
+  document.getElementById('ipRows').innerHTML = `
+    <div class="ip-row"><span class="lbl">CALLSIGN</span><span class="val">${cs}</span></div>
+    <div class="ip-row"><span class="lbl">CLASSIFICATION</span><span class="val" style="color:${col}">${mil ? '⚔ MILITARY' : '✈ CIVILIAN'}</span></div>
+    <div class="ip-row"><span class="lbl">ORIGIN</span><span class="val">${origin || 'UNKNOWN'}</span></div>
+    <div class="ip-row"><span class="lbl">ALTITUDE</span><span class="val">${alt} ft</span></div>
+    <div class="ip-row"><span class="lbl">SPEED</span><span class="val">${spd} kts</span></div>
+    <div class="ip-row"><span class="lbl">HEADING</span><span class="val">${heading ? Math.round(heading) + '°' : '--'}</span></div>
+    <div class="ip-row"><span class="lbl">SQUAWK</span><span class="val">${squawk || '--'}</span></div>
+    <div class="ip-row"><span class="lbl">ICAO24</span><span class="val">${icao24 || '--'}</span></div>
+    <div class="ip-row"><span class="lbl">POSITION</span><span class="val">${lat?.toFixed(4)}°, ${lng?.toFixed(4)}°</span></div>`;
+  document.getElementById('ipNotes').textContent = mil
+    ? 'Military aircraft identified via ICAO24 hex range or callsign pattern. ADS-B data via OpenSky Network.'
+    : 'Civilian aircraft tracked via ADS-B transponder. Live feed from OpenSky Network.';
+  document.getElementById('ipStatusText').textContent = 'AIRBORNE — TRACKING';
+}
+
+function showShipPanel(ship, i) {
+  const panel = document.getElementById('infoPanel');
+  panel.className = 'info-panel ship-panel show';
+  document.getElementById('ipHeader').textContent = '// VESSEL TELEMETRY';
+  document.getElementById('ipName').textContent = ship.name;
+  document.getElementById('ipName').style.color = 'var(--ship-color)';
+
+  // Ship length from AIS dimensions A+B
+  const len = (ship.dim_a && ship.dim_b) ? `${ship.dim_a + ship.dim_b}m` : '--';
+
+  document.getElementById('ipRows').innerHTML = `
+    <div class="ip-row"><span class="lbl">TYPE</span><span class="val">${ship.type}</span></div>
+    <div class="ip-row"><span class="lbl">FLAG</span><span class="val">${ship.flag}</span></div>
+    <div class="ip-row"><span class="lbl">MMSI</span><span class="val">${ship.mmsi || '--'}</span></div>
+    ${ship.imo ? `<div class="ip-row"><span class="lbl">IMO</span><span class="val">${ship.imo}</span></div>` : ''}
+    ${ship.callsign ? `<div class="ip-row"><span class="lbl">CALLSIGN</span><span class="val">${ship.callsign}</span></div>` : ''}
+    <div class="ip-row"><span class="lbl">SPEED</span><span class="val">${ship.speed} kts</span></div>
+    <div class="ip-row"><span class="lbl">HEADING</span><span class="val">${Math.round(ship.heading || 0)}°</span></div>
+    ${ship.destination ? `<div class="ip-row"><span class="lbl">DESTINATION</span><span class="val">${ship.destination}</span></div>` : ''}
+    ${len !== '--' ? `<div class="ip-row"><span class="lbl">LENGTH</span><span class="val">${len}</span></div>` : ''}
+    <div class="ip-row"><span class="lbl">POSITION</span><span class="val">${ship.lat.toFixed(4)}°, ${ship.lng.toFixed(4)}°</span></div>`;
+  document.getElementById('ipNotes').textContent = aisConnected
+    ? 'Live AIS position via AISStream.io WebSocket feed.'
+    : 'Simulated vessel data — AISStream connection unavailable.';
+  document.getElementById('ipStatusText').textContent = 'UNDERWAY — TRACKING';
+}
+
+function deselectAll() {
+  if (selectedType === 'base' && selectedIdx !== null && baseMarkers[selectedIdx]) {
+    baseMarkers[selectedIdx].marker.setIcon({...baseMarkers[selectedIdx].icon, scale:9, fillOpacity:.4});
+  }
+  selectedType = null; selectedIdx = null;
+  document.querySelectorAll('.bcard').forEach(c => c.classList.remove('active'));
+  document.getElementById('infoPanel').classList.remove('show');
+}
+document.getElementById('closePanel').addEventListener('click', deselectAll);
+
+// ── BASE SIDEBAR ──
+function buildBaseList() {
+  const list = document.getElementById('baseList');
+  list.innerHTML = '';
+  const filtered = BASES.filter(b => activeBaseFilter === 'all' || b.type === activeBaseFilter);
+  baseMarkers.forEach(({ marker }, i) => {
+    marker.setVisible(layerVisible.bases && (activeBaseFilter === 'all' || BASES[i].type === activeBaseFilter));
+  });
+  filtered.forEach(base => {
+    const i = BASES.indexOf(base);
+    const c = TYPE_COLOR[base.type] || { hex:'#ff3b3b' };
+    const card = document.createElement('div');
+    card.className = 'bcard' + (selectedType === 'base' && selectedIdx === i ? ' active' : '');
+    card.dataset.i = i;
+    card.innerHTML = `
+      <div class="bcard-name">${base.name}</div>
+      <div class="bcard-meta">
+        <span class="bcard-country">${base.country}</span>
+        <span class="badge" style="border-color:${c.hex};color:${c.hex}">${base.type.toUpperCase()}</span>
+      </div>`;
+    card.addEventListener('click', () => { showBasePanel(i); map.panTo({lat:base.lat, lng:base.lng}); });
+    list.appendChild(card);
+  });
+}
+
+document.getElementById('tab-bases').addEventListener('click', e => {
+  const btn = e.target.closest('.fbtn'); if (!btn) return;
+  document.querySelectorAll('#tab-bases .fbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeBaseFilter = btn.dataset.filter;
+  buildBaseList();
+});
+
+// ── REFRESH BUTTONS ──
+document.getElementById('refreshPlanes').addEventListener('click', () => { clearInterval(planeTimer); fetchPlanes(); resetCountdown('plane'); planeTimer = setInterval(() => { fetchPlanes(); resetCountdown('plane'); }, 60000); });
+document.getElementById('refreshShips').addEventListener('click',  () => { connectAIS(); resetCountdown('ship'); });
+
+function updateTimestamp() {
+  const n = new Date(), z = v => String(v).padStart(2,'0');
+  document.getElementById('lastUpdate').textContent =
+    `LAST UPDATE: ${z(n.getUTCHours())}:${z(n.getUTCMinutes())}:${z(n.getUTCSeconds())} UTC`;
+}
+</script>
+
+<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCr_gG1b6Hu7OZ-NvrQoBbomAJKdpKYvGE&callback=initMap"></script>
+</body>
+</html>
